@@ -12,6 +12,7 @@ if TYPE_CHECKING:
         Measurement,
         ProtocolResult,
         Qubit,
+        StepResult,
     )
 
 
@@ -46,12 +47,16 @@ class ProtocolPort(ABC):
         """Execute the protocol with the given number of qubits."""
 
     @abstractmethod
-    def step(self) -> dict[str, object]:
+    def step(self) -> StepResult:
         """Execute one step of the protocol and return the current state."""
 
     @abstractmethod
-    def reset(self) -> None:
+    def reset(self, num_qubits: int) -> None:
         """Reset the protocol to its initial state."""
+
+    @abstractmethod
+    def is_complete(self) -> bool:
+        """Return True if the protocol has finished all phases."""
 
 
 class RandomnessPort(ABC):

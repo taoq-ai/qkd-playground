@@ -20,6 +20,17 @@ class BitValue(Enum):
     ONE = 1
 
 
+class ProtocolPhase(Enum):
+    """Phases of a QKD protocol execution."""
+
+    PREPARATION = "preparation"
+    TRANSMISSION = "transmission"
+    MEASUREMENT = "measurement"
+    SIFTING = "sifting"
+    ERROR_ESTIMATION = "error_estimation"
+    COMPLETE = "complete"
+
+
 @dataclass(frozen=True)
 class Qubit:
     """Represents a qubit prepared in a specific basis with a bit value."""
@@ -38,6 +49,28 @@ class Measurement:
 
 
 @dataclass
+class StepResult:
+    """Result of a single protocol step, suitable for UI consumption."""
+
+    phase: ProtocolPhase
+    step_index: int
+    description: str
+    alice_bits: list[BitValue] = field(default_factory=list)
+    alice_bases: list[Basis] = field(default_factory=list)
+    bob_bases: list[Basis] = field(default_factory=list)
+    bob_results: list[BitValue] = field(default_factory=list)
+    matching_bases: list[bool] = field(default_factory=list)
+    sifted_key_alice: list[BitValue] = field(default_factory=list)
+    sifted_key_bob: list[BitValue] = field(default_factory=list)
+    error_rate: float | None = None
+    eavesdropper_detected: bool | None = None
+    shared_key: list[BitValue] = field(default_factory=list)
+    eve_intercepted: bool = False
+    eve_bases: list[Basis] = field(default_factory=list)
+    eve_results: list[BitValue] = field(default_factory=list)
+
+
+@dataclass
 class ProtocolResult:
     """Result of running a QKD protocol."""
 
@@ -46,6 +79,7 @@ class ProtocolResult:
     raw_key_length: int = 0
     sifted_key_length: int = 0
     eavesdropper_detected: bool = False
+    steps: list[StepResult] = field(default_factory=list)
 
 
 class ProtocolType(Enum):
