@@ -1,5 +1,5 @@
 {
-  "name": "@qkd-playground/frontend",
+  "name": "@taoq-ai/qkd-playground",
   "version": "0.0.0",
   "description": "QKD Playground — Interactive quantum key distribution simulator UI",
   "type": "module",

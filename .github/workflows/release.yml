@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: npm
-      url: https://www.npmjs.com/package/@qkd-playground/frontend/v/${{ needs.validate.outputs.version }}
+      url: https://www.npmjs.com/package/@taoq-ai/qkd-playground/v/${{ needs.validate.outputs.version }}
     defaults:
       run:
         working-directory: frontend
@@ -104,5 +104,5 @@ jobs:
 
             ## Packages
             - **PyPI**: [qkd-playground ${{ needs.validate.outputs.version }}](https://pypi.org/project/qkd-playground/${{ needs.validate.outputs.version }}/)
-            - **npm**: [@qkd-playground/frontend ${{ needs.validate.outputs.version }}](https://www.npmjs.com/package/@qkd-playground/frontend/v/${{ needs.validate.outputs.version }})
+            - **npm**: [@taoq-ai/qkd-playground ${{ needs.validate.outputs.version }}](https://www.npmjs.com/package/@taoq-ai/qkd-playground/v/${{ needs.validate.outputs.version }})
           generate_release_notes: true

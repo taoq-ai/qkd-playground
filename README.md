@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/taoq-ai/qkd-playground/actions/workflows/ci.yml/badge.svg)](https://github.com/taoq-ai/qkd-playground/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/qkd-playground)](https://pypi.org/project/qkd-playground/)
-[![npm](https://img.shields.io/npm/v/@qkd-playground/frontend)](https://www.npmjs.com/package/@qkd-playground/frontend)
+[![npm](https://img.shields.io/npm/v/@taoq-ai/qkd-playground)](https://www.npmjs.com/package/@taoq-ai/qkd-playground)
 [![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](https://taoq-ai.github.io/qkd-playground)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
