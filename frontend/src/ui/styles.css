@@ -547,6 +547,18 @@ body {
   color: var(--foreground-secondary);
 }
 
+/* Circuit diagram */
+.circuit-diagram-wrapper {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.circuit-diagram {
+  width: 100%;
+  max-width: 620px;
+  height: auto;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .app {
