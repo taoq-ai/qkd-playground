@@ -10,6 +10,7 @@ import {
   ProgressBar,
   QubitTable,
   ResultsPanel,
+  StatisticsPanel,
 } from "./components";
 import { PHASE_LABELS, PROTOCOL_INFO } from "./constants";
 import "./styles.css";
@@ -184,6 +185,7 @@ export function App() {
                   protocol={protocol}
                 />
                 <ResultsPanel step={currentStep} />
+                <StatisticsPanel currentStep={currentStep} protocol={protocol} />
               </div>
             )}
 

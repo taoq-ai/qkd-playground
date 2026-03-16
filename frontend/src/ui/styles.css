@@ -684,6 +684,74 @@ body {
   line-height: 1.6;
 }
 
+/* Statistics panel */
+.statistics-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.statistics-panel h3 {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.qber-gauge {
+  display: flex;
+  justify-content: center;
+}
+
+.qber-gauge-svg {
+  width: 160px;
+  height: 95px;
+}
+
+.chart-title {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.key-efficiency-chart {
+  width: 100%;
+}
+
+.statistics-summary {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .app {
@@ -703,7 +771,8 @@ body {
     max-width: 3.5rem;
   }
 
-  .results-grid {
+  .results-grid,
+  .statistics-grid {
     grid-template-columns: 1fr;
   }
 
