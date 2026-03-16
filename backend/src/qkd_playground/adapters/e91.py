@@ -21,6 +21,7 @@ security check.
 from __future__ import annotations
 
 from qkd_playground.adapters.qiskit_adapter import (
+    EavesdroppingChannel,  # noqa: TCH001
     QiskitEntanglementAdapter,  # noqa: TCH001
 )
 from qkd_playground.domain.models import (
@@ -77,6 +78,8 @@ class E91Protocol(ProtocolPort):
         self._alice_qubits: list[Qubit] = []
         self._bob_qubits: list[Qubit] = []
         self._disturbed: list[bool] = []
+        self._eve_bases: list[Basis] = []
+        self._eve_results: list[BitValue] = []
 
     def reset(self, num_qubits: int) -> None:
         """Reset protocol state for a new run."""
@@ -97,6 +100,10 @@ class E91Protocol(ProtocolPort):
         self._alice_qubits = []
         self._bob_qubits = []
         self._disturbed = []
+        self._eve_bases = []
+        self._eve_results = []
+        if isinstance(self._channel, EavesdroppingChannel):
+            self._channel.clear()
 
     def is_complete(self) -> bool:
         return self._phase == ProtocolPhase.COMPLETE
@@ -160,6 +167,11 @@ class E91Protocol(ProtocolPort):
                 self._bob_qubits, original_bob, strict=True
             )
         ]
+
+        # Record Eve's interception data if eavesdropper is active
+        if isinstance(self._channel, EavesdroppingChannel):
+            self._eve_bases = self._channel.eve_bases
+            self._eve_results = self._channel.eve_results
 
         self._phase = ProtocolPhase.MEASUREMENT
         self._step_index += 1
@@ -342,4 +354,7 @@ class E91Protocol(ProtocolPort):
             eavesdropper_detected=(self._eavesdropper_detected if is_done else None),
             shared_key=list(self._shared_key),
             chsh_value=self._chsh_value if is_done else None,
+            eve_intercepted=len(self._eve_bases) > 0,
+            eve_bases=list(self._eve_bases),
+            eve_results=list(self._eve_results),
         )

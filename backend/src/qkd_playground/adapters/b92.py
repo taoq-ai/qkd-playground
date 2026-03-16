@@ -21,6 +21,7 @@ Protocol steps:
 
 from __future__ import annotations
 
+from qkd_playground.adapters.qiskit_adapter import EavesdroppingChannel
 from qkd_playground.domain.models import (
     Basis,
     BitValue,
@@ -70,6 +71,8 @@ class B92Protocol(ProtocolPort):
         self._eavesdropper_detected: bool = False
         self._shared_key: list[BitValue] = []
         self._transmitted_qubits: list[Qubit] = []
+        self._eve_bases: list[Basis] = []
+        self._eve_results: list[BitValue] = []
 
     def reset(self, num_qubits: int) -> None:
         """Reset protocol state for a new run."""
@@ -88,6 +91,10 @@ class B92Protocol(ProtocolPort):
         self._eavesdropper_detected = False
         self._shared_key = []
         self._transmitted_qubits = []
+        self._eve_bases = []
+        self._eve_results = []
+        if isinstance(self._channel, EavesdroppingChannel):
+            self._channel.clear()
 
     def is_complete(self) -> bool:
         return self._phase == ProtocolPhase.COMPLETE
@@ -151,6 +158,11 @@ class B92Protocol(ProtocolPort):
             qubit = self._measurement.prepare(value, basis)
             transmitted = self._channel.transmit(qubit)
             self._transmitted_qubits.append(transmitted)
+
+        # Record Eve's interception data if eavesdropper is active
+        if isinstance(self._channel, EavesdroppingChannel):
+            self._eve_bases = self._channel.eve_bases
+            self._eve_results = self._channel.eve_results
 
         self._phase = ProtocolPhase.MEASUREMENT
         self._step_index += 1
@@ -282,4 +294,7 @@ class B92Protocol(ProtocolPort):
             eavesdropper_detected=(self._eavesdropper_detected if is_done else None),
             shared_key=list(self._shared_key),
             conclusive_mask=list(self._conclusive_mask),
+            eve_intercepted=len(self._eve_bases) > 0,
+            eve_bases=list(self._eve_bases),
+            eve_results=list(self._eve_results),
         )

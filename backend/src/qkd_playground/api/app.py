@@ -54,6 +54,9 @@ class StepResponse(BaseModel):
     shared_key: list[int]
     conclusive_mask: list[bool] = []
     chsh_value: float | None = None
+    eve_intercepted: bool = False
+    eve_bases: list[str] = []
+    eve_results: list[int] = []
     is_complete: bool
 
     @classmethod
@@ -75,6 +78,9 @@ class StepResponse(BaseModel):
             shared_key=[b.value for b in step.shared_key],
             conclusive_mask=step.conclusive_mask,
             chsh_value=step.chsh_value,
+            eve_intercepted=step.eve_intercepted,
+            eve_bases=[b.value for b in step.eve_bases],
+            eve_results=[b.value for b in step.eve_results],
             is_complete=complete,
         )
 
