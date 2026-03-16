@@ -144,5 +144,6 @@ jobs:
         run: uv build
       - name: Install and verify CLI
         run: |
-          uv pip install --system backend/dist/*.whl
-          qkd-playground --help
+          uv venv .venv
+          uv pip install --python .venv/bin/python backend/dist/*.whl
+          .venv/bin/qkd-playground --help
