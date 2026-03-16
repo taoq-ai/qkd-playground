@@ -8,6 +8,17 @@ export default defineConfig({
     react(),
     dts({ tsconfigPath: "./tsconfig.build.json", rollupTypes: true }),
   ],
+  root: ".",
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
