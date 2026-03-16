@@ -121,3 +121,29 @@ jobs:
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn build
+
+  bundled-build:
+    name: Bundled Build (pip install)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: corepack enable
+      - name: Build frontend SPA
+        working-directory: frontend
+        run: |
+          yarn install --immutable
+          yarn build:spa
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Build backend wheel with bundled frontend
+        working-directory: backend
+        run: uv build
+      - name: Install and verify CLI
+        run: |
+          uv venv .venv
+          uv pip install --python .venv/bin/python backend/dist/*.whl
+          .venv/bin/qkd-playground --help

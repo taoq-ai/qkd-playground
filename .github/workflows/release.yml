@@ -27,17 +27,24 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/project/qkd-playground/${{ needs.validate.outputs.version }}
-    defaults:
-      run:
-        working-directory: backend
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # needed for hatch-vcs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: corepack enable
+      - name: Build frontend SPA
+        working-directory: frontend
+        run: |
+          yarn install --immutable
+          yarn build:spa
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - name: Build package
+      - name: Build package (with bundled frontend)
+        working-directory: backend
         run: uv build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

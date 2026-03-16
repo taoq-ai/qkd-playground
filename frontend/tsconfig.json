@@ -10,6 +10,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client"],
     "skipLibCheck": true,
     "isolatedModules": true,
     "esModuleInterop": true,

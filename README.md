@@ -32,30 +32,24 @@ When Eve intercepts qubits, the error rate jumps above the 11% threshold — the
 
 ## Quick Start
 
-### Backend
+### Install from PyPI
 
 ```bash
-cd backend
-uv sync
-uv run uvicorn qkd_playground.api.app:create_app --factory --reload --port 8000
+pip install qkd-playground
+qkd-playground              # opens at http://localhost:8000
+qkd-playground --port 3000  # custom port
 ```
 
-### Frontend
+The Python package includes the bundled frontend — no Node.js required.
 
-```bash
-cd frontend
-yarn install
-yarn dev    # starts at http://localhost:5173, proxies API to :8000
-```
-
-### Run both together
+### Development Setup
 
 ```bash
 # Terminal 1 — Backend
-cd backend && uv run uvicorn qkd_playground.api.app:create_app --factory --reload
+cd backend && uv sync && uv run uvicorn qkd_playground.api.app:create_app --factory --reload
 
 # Terminal 2 — Frontend
-cd frontend && yarn dev
+cd frontend && yarn install && yarn dev
 ```
 
 Then open [http://localhost:5173](http://localhost:5173).

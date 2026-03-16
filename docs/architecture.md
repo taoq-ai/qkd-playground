@@ -37,6 +37,17 @@ graph TD
 3. **Adapters are swappable** — Qiskit today, different simulator tomorrow
 4. **Dependencies point inward** — Adapters depend on domain, never the reverse
 
+## Deployment Model
+
+The frontend SPA is bundled into the Python wheel at build time via a custom hatch build hook (`hatch_build.py`). FastAPI serves the static assets alongside the API, so users get a single-command install:
+
+```bash
+pip install qkd-playground
+qkd-playground
+```
+
+The npm package (`@taoq-ai/qkd-playground`) remains available for consumers who want to embed the React components in their own applications.
+
 ## Backend Structure
 
 ```
@@ -45,9 +56,12 @@ backend/src/qkd_playground/
 │   ├── models.py      # Qubit, Basis, BitValue, ProtocolResult
 │   └── ports.py       # QuantumChannelPort, MeasurementPort, ProtocolPort
 ├── adapters/
+│   ├── bb84.py        # BB84 protocol implementation
 │   └── qiskit_adapter.py  # Qiskit-based implementations
-└── api/
-    └── app.py         # FastAPI application factory
+├── api/
+│   └── app.py         # FastAPI application factory (serves API + bundled frontend)
+├── cli.py             # CLI entry point (qkd-playground command)
+└── static/            # Bundled frontend SPA (auto-generated at build time)
 ```
 
 ### Domain Models

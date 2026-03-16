@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from qkd_playground.adapters.bb84 import BB84Protocol
@@ -215,5 +218,19 @@ def create_app() -> FastAPI:
         protocol.reset(session["num_qubits"])
         session["steps"] = []
         return {"status": "reset"}
+
+    # Serve bundled frontend (if available)
+    static_dir = Path(__file__).resolve().parent.parent / "static"
+    if static_dir.is_dir():
+
+        @app.get("/")
+        async def index() -> FileResponse:
+            return FileResponse(static_dir / "index.html")
+
+        app.mount(
+            "/",
+            StaticFiles(directory=str(static_dir), html=True),
+            name="frontend",
+        )
 
     return app
