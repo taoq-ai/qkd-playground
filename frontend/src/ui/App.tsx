@@ -77,6 +77,17 @@ function QubitTable({ step }: { step: StepResponse }) {
             {truncated && <span className="ellipsis">&hellip;</span>}
           </div>
         )}
+        {step.conclusive_mask.length > 0 && (
+          <div className="qubit-row">
+            <span className="row-label">Conclusive</span>
+            {step.conclusive_mask.slice(0, maxShow).map((c, i) => (
+              <span key={`c-${i}`} className={`match-cell ${c ? "match-yes" : "match-no"}`}>
+                {c ? "✓" : "✗"}
+              </span>
+            ))}
+            {truncated && <span className="ellipsis">&hellip;</span>}
+          </div>
+        )}
         {step.matching_bases.length > 0 && (
           <div className="qubit-row">
             <span className="row-label">Bases Match</span>
@@ -135,6 +146,16 @@ function ResultsPanel({ step }: { step: StepResponse }) {
             {detected ? "⚠ Detected!" : "✓ Not detected"}
           </span>
         </div>
+        {step.chsh_value !== null && (
+          <div className="result-item">
+            <span className="result-label">CHSH S Value</span>
+            <span
+              className={`result-value ${step.chsh_value >= 2 * Math.SQRT2 * 0.9 ? "text-safe" : "text-danger"}`}
+            >
+              {step.chsh_value.toFixed(3)}
+            </span>
+          </div>
+        )}
       </div>
       {step.shared_key.length > 0 && (
         <div className="shared-key-display">
@@ -149,12 +170,37 @@ function ResultsPanel({ step }: { step: StepResponse }) {
   );
 }
 
+const PROTOCOL_INFO: Record<string, { name: string; description: string }> = {
+  bb84: {
+    name: "BB84",
+    description:
+      "The original QKD protocol by Bennett & Brassard (1984). Alice sends " +
+      "qubits encoded in two random bases; Bob measures in two random bases. " +
+      "They keep bits where bases match (~50% sift rate).",
+  },
+  b92: {
+    name: "B92",
+    description:
+      "A simplified protocol by Bennett (1992) using only two non-orthogonal " +
+      "states: |0⟩ for bit 0 and |+⟩ for bit 1. Bob's conclusive measurements " +
+      "(outcome = 1) reveal Alice's bit (~25% sift rate).",
+  },
+  e91: {
+    name: "E91",
+    description:
+      "Ekert's entanglement-based protocol (1991). Alice and Bob share Bell " +
+      "pairs and measure in random bases. Security is verified via CHSH " +
+      "inequality violation.",
+  },
+};
+
 export function App() {
   const [simId, setSimId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [numQubits, setNumQubits] = useState(20);
   const [eavesdropper, setEavesdropper] = useState(false);
+  const [protocol, setProtocol] = useState("bb84");
   const [error, setError] = useState<string | null>(null);
 
   const currentStep = steps.length > 0 ? steps[steps.length - 1] : null;
@@ -164,7 +210,7 @@ export function App() {
     setLoading(true);
     setError(null);
     try {
-      const id = await createSimulation("bb84", numQubits, eavesdropper);
+      const id = await createSimulation(protocol, numQubits, eavesdropper);
       setSimId(id);
       setSteps([]);
     } catch (e) {
@@ -172,7 +218,7 @@ export function App() {
     } finally {
       setLoading(false);
     }
-  }, [numQubits, eavesdropper]);
+  }, [protocol, numQubits, eavesdropper]);
 
   const handleStep = useCallback(async () => {
     if (!simId) return;
@@ -221,10 +267,21 @@ export function App() {
         {!simId ? (
           <div className="setup-panel">
             <h2>Configure Simulation</h2>
-            <p className="setup-description">
-              Simulate the BB84 quantum key distribution protocol. Alice and Bob will exchange
-              quantum states to establish a shared secret key.
-            </p>
+            <p className="setup-description">{PROTOCOL_INFO[protocol]?.description}</p>
+
+            <div className="form-group">
+              <label htmlFor="protocol-select">Protocol</label>
+              <select
+                id="protocol-select"
+                className="protocol-select"
+                value={protocol}
+                onChange={(e) => setProtocol(e.target.value)}
+              >
+                <option value="bb84">BB84 — Bennett &amp; Brassard (1984)</option>
+                <option value="b92">B92 — Bennett (1992)</option>
+                <option value="e91">E91 — Ekert (1991)</option>
+              </select>
+            </div>
 
             <div className="form-group">
               <label htmlFor="num-qubits">Number of Qubits</label>
@@ -257,7 +314,7 @@ export function App() {
             </div>
 
             <button className="btn btn-primary" onClick={handleCreate} disabled={loading}>
-              {loading ? "Creating…" : "Start BB84 Simulation"}
+              {loading ? "Creating…" : `Start ${PROTOCOL_INFO[protocol]?.name} Simulation`}
             </button>
           </div>
         ) : (

@@ -3,15 +3,13 @@
 from __future__ import annotations
 
 import uuid
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
 from qkd_playground.adapters.qiskit_adapter import (
     DefaultRandomness,
@@ -23,6 +21,9 @@ from qkd_playground.domain.models import (
     ProtocolType,
     StepResult,
 )
+
+if TYPE_CHECKING:
+    from qkd_playground.domain.ports import ProtocolPort
 
 
 class CreateSimulationRequest(BaseModel):
@@ -49,6 +50,8 @@ class StepResponse(BaseModel):
     error_rate: float | None
     eavesdropper_detected: bool | None
     shared_key: list[int]
+    conclusive_mask: list[bool] = []
+    chsh_value: float | None = None
     is_complete: bool
 
     @classmethod
@@ -68,6 +71,8 @@ class StepResponse(BaseModel):
             error_rate=step.error_rate,
             eavesdropper_detected=step.eavesdropper_detected,
             shared_key=[b.value for b in step.shared_key],
+            conclusive_mask=step.conclusive_mask,
+            chsh_value=step.chsh_value,
             is_complete=complete,
         )
 
@@ -101,9 +106,10 @@ _sessions: dict[str, dict[str, Any]] = {}
 
 
 def _create_protocol(
+    protocol_type: str,
     eavesdropper: bool,
-) -> BB84Protocol:
-    """Create a BB84 protocol instance."""
+) -> ProtocolPort:
+    """Create a protocol instance based on type."""
     measurement = QiskitMeasurementAdapter()
     channel: IdealQuantumChannel | EavesdroppingChannel
     if eavesdropper:
@@ -111,6 +117,8 @@ def _create_protocol(
     else:
         channel = IdealQuantumChannel()
     randomness = DefaultRandomness()
+    if protocol_type == "b92":
+        return B92Protocol(measurement, channel, randomness)
     return BB84Protocol(measurement, channel, randomness)
 
 
@@ -143,7 +151,7 @@ def create_app() -> FastAPI:
         req: CreateSimulationRequest,
     ) -> dict[str, str]:
         sim_id = str(uuid.uuid4())
-        protocol = _create_protocol(req.eavesdropper)
+        protocol = _create_protocol(req.protocol, req.eavesdropper)
         protocol.reset(req.num_qubits)
         _sessions[sim_id] = {
             "protocol": protocol,
@@ -159,7 +167,7 @@ def create_app() -> FastAPI:
         if sim_id not in _sessions:
             raise HTTPException(404, "Simulation not found")
         session = _sessions[sim_id]
-        protocol: BB84Protocol = session["protocol"]
+        protocol: ProtocolPort = session["protocol"]
         if protocol.is_complete():
             raise HTTPException(400, "Simulation already complete")
         step = protocol.step()
@@ -172,7 +180,7 @@ def create_app() -> FastAPI:
         if sim_id not in _sessions:
             raise HTTPException(404, "Simulation not found")
         session = _sessions[sim_id]
-        protocol: BB84Protocol = session["protocol"]
+        protocol: ProtocolPort = session["protocol"]
         steps: list[StepResponse] = session["steps"]
         return SimulationState(
             simulation_id=sim_id,
@@ -190,7 +198,7 @@ def create_app() -> FastAPI:
         if sim_id not in _sessions:
             raise HTTPException(404, "Simulation not found")
         session = _sessions[sim_id]
-        protocol: BB84Protocol = session["protocol"]
+        protocol: ProtocolPort = session["protocol"]
 
         while not protocol.is_complete():
             step = protocol.step()
@@ -214,23 +222,9 @@ def create_app() -> FastAPI:
         if sim_id not in _sessions:
             raise HTTPException(404, "Simulation not found")
         session = _sessions[sim_id]
-        protocol: BB84Protocol = session["protocol"]
+        protocol: ProtocolPort = session["protocol"]
         protocol.reset(session["num_qubits"])
         session["steps"] = []
         return {"status": "reset"}
-
-    # Serve bundled frontend (if available)
-    static_dir = Path(__file__).resolve().parent.parent / "static"
-    if static_dir.is_dir():
-
-        @app.get("/")
-        async def index() -> FileResponse:
-            return FileResponse(static_dir / "index.html")
-
-        app.mount(
-            "/",
-            StaticFiles(directory=str(static_dir), html=True),
-            name="frontend",
-        )
 
     return app

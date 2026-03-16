@@ -16,6 +16,8 @@ export interface StepResponse {
   error_rate: number | null;
   eavesdropper_detected: boolean | null;
   shared_key: number[];
+  conclusive_mask: boolean[];
+  chsh_value: number | null;
   is_complete: boolean;
 }
 
@@ -29,10 +31,6 @@ export interface SimulationState {
   is_complete: boolean;
 }
 
-/**
- * In dev mode (Vite proxy), API calls go through /api prefix.
- * In bundled mode (served from FastAPI), API calls go directly to the same origin.
- */
 const BASE_URL = import.meta.env.DEV ? "/api" : "";
 
 export async function createSimulation(

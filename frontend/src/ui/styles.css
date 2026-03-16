@@ -154,6 +154,33 @@ body {
   font-weight: 500;
 }
 
+.protocol-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: var(--background-tertiary);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a1a1aa'%3E%3Cpath d='M6 8.825a.5.5 0 0 1-.354-.146l-4-4a.5.5 0 1 1 .708-.708L6 7.617l3.646-3.646a.5.5 0 1 1 .708.708l-4 4A.5.5 0 0 1 6 8.825z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+.protocol-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.protocol-select option {
+  background: var(--background-secondary);
+  color: var(--foreground);
+}
+
 .eve-warning {
   margin-top: 0.5rem;
   padding: 0.75rem;
