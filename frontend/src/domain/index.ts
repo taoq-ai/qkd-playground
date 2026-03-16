@@ -38,6 +38,8 @@ export enum ProtocolType {
   B92 = "b92",
 }
 
+export { type ConceptEntry, CONCEPTS, getConceptsForPhase } from "./concepts";
+
 /** Port interface for the simulation API client. */
 export interface SimulationPort {
   listProtocols(): Promise<{ name: string; label: string }[]>;

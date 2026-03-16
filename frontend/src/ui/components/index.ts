@@ -1,6 +1,7 @@
 export { BasisBadge } from "./BasisBadge";
 export { BitCell } from "./BitCell";
 export { CircuitDiagram } from "./CircuitDiagram";
+export { ConceptPanel } from "./ConceptPanel";
 export { EveAlert } from "./EveAlert";
 export { EvePanel } from "./EvePanel";
 export { ProgressBar } from "./ProgressBar";
