@@ -1,8 +1,10 @@
 import { useCallback, useState } from "react";
 import type { StepResponse } from "../adapters";
 import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
+import { getConceptsForPhase } from "../domain";
 import {
   CircuitDiagram,
+  ConceptPanel,
   EveAlert,
   EvePanel,
   ProgressBar,
@@ -166,6 +168,8 @@ export function App() {
                   <span className="step-number">Step {currentStep.step_index} of 5</span>
                 </div>
                 <p className="step-description">{currentStep.description}</p>
+
+                <ConceptPanel concepts={getConceptsForPhase(currentStep.phase, protocol)} />
 
                 <CircuitDiagram
                   step={currentStep}
