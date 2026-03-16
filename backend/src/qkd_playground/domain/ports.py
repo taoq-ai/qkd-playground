@@ -59,6 +59,14 @@ class ProtocolPort(ABC):
         """Return True if the protocol has finished all phases."""
 
 
+class EntanglementPort(ABC):
+    """Port for generating entangled qubit pairs."""
+
+    @abstractmethod
+    def generate_bell_pair(self) -> tuple[Qubit, Qubit]:
+        """Generate a Bell pair |Φ+⟩ = (|00⟩ + |11⟩)/√2."""
+
+
 class RandomnessPort(ABC):
     """Port for generating random values (basis choices, bit values)."""
 

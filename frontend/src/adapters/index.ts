@@ -16,6 +16,8 @@ export interface StepResponse {
   error_rate: number | null;
   eavesdropper_detected: boolean | null;
   shared_key: number[];
+  conclusive_mask: boolean[];
+  chsh_value: number | null;
   is_complete: boolean;
 }
 
@@ -29,10 +31,6 @@ export interface SimulationState {
   is_complete: boolean;
 }
 
-/**
- * In dev mode (Vite proxy), API calls go through /api prefix.
- * In bundled mode (served from FastAPI), API calls go directly to the same origin.
- */
 const BASE_URL = import.meta.env.DEV ? "/api" : "";
 
 export async function createSimulation(
@@ -53,14 +51,18 @@ export async function createSimulation(
   return data.simulation_id;
 }
 
-export async function stepSimulation(simulationId: string): Promise<StepResponse> {
+export async function stepSimulation(
+  simulationId: string,
+): Promise<StepResponse> {
   const resp = await fetch(`${BASE_URL}/simulation/${simulationId}/step`, {
     method: "POST",
   });
   return (await resp.json()) as StepResponse;
 }
 
-export async function getSimulationState(simulationId: string): Promise<SimulationState> {
+export async function getSimulationState(
+  simulationId: string,
+): Promise<SimulationState> {
   const resp = await fetch(`${BASE_URL}/simulation/${simulationId}/state`);
   return (await resp.json()) as SimulationState;
 }
@@ -71,7 +73,9 @@ export async function resetSimulation(simulationId: string): Promise<void> {
   });
 }
 
-export async function runSimulation(simulationId: string): Promise<StepResponse[]> {
+export async function runSimulation(
+  simulationId: string,
+): Promise<StepResponse[]> {
   const resp = await fetch(`${BASE_URL}/simulation/${simulationId}/run`, {
     method: "POST",
   });

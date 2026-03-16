@@ -65,6 +65,8 @@ class StepResult:
     error_rate: float | None = None
     eavesdropper_detected: bool | None = None
     shared_key: list[BitValue] = field(default_factory=list)
+    conclusive_mask: list[bool] = field(default_factory=list)
+    chsh_value: float | None = None
     eve_intercepted: bool = False
     eve_bases: list[Basis] = field(default_factory=list)
     eve_results: list[BitValue] = field(default_factory=list)

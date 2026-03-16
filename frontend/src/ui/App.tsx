@@ -1,6 +1,10 @@
 import { useCallback, useState } from "react";
 import type { StepResponse } from "../adapters";
-import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
+import {
+  createSimulation,
+  resetSimulation,
+  stepSimulation,
+} from "../adapters";
 import "./styles.css";
 
 const PHASE_LABELS: Record<string, string> = {
@@ -24,14 +28,21 @@ const PHASE_ORDER = [
 function BasisBadge({ basis }: { basis: string }) {
   const isRect = basis === "rectilinear";
   return (
-    <span className={`basis-badge ${isRect ? "basis-rect" : "basis-diag"}`} title={basis}>
+    <span
+      className={`basis-badge ${isRect ? "basis-rect" : "basis-diag"}`}
+      title={basis}
+    >
       {isRect ? "+" : "×"}
     </span>
   );
 }
 
 function BitCell({ value, highlight }: { value: number; highlight?: boolean }) {
-  return <span className={`bit-cell ${highlight ? "bit-highlight" : ""}`}>{value}</span>;
+  return (
+    <span className={`bit-cell ${highlight ? "bit-highlight" : ""}`}>
+      {value}
+    </span>
+  );
 }
 
 function QubitTable({ step }: { step: StepResponse }) {
@@ -77,11 +88,28 @@ function QubitTable({ step }: { step: StepResponse }) {
             {truncated && <span className="ellipsis">&hellip;</span>}
           </div>
         )}
+        {step.conclusive_mask.length > 0 && (
+          <div className="qubit-row">
+            <span className="row-label">Conclusive</span>
+            {step.conclusive_mask.slice(0, maxShow).map((c, i) => (
+              <span
+                key={`c-${i}`}
+                className={`match-cell ${c ? "match-yes" : "match-no"}`}
+              >
+                {c ? "✓" : "✗"}
+              </span>
+            ))}
+            {truncated && <span className="ellipsis">&hellip;</span>}
+          </div>
+        )}
         {step.matching_bases.length > 0 && (
           <div className="qubit-row">
             <span className="row-label">Bases Match</span>
             {step.matching_bases.slice(0, maxShow).map((m, i) => (
-              <span key={`m-${i}`} className={`match-cell ${m ? "match-yes" : "match-no"}`}>
+              <span
+                key={`m-${i}`}
+                className={`match-cell ${m ? "match-yes" : "match-no"}`}
+              >
                 {m ? "✓" : "✗"}
               </span>
             ))}
@@ -135,6 +163,14 @@ function ResultsPanel({ step }: { step: StepResponse }) {
             {detected ? "⚠ Detected!" : "✓ Not detected"}
           </span>
         </div>
+        {step.chsh_value !== null && (
+          <div className="result-item">
+            <span className="result-label">CHSH S Value</span>
+            <span className={`result-value ${step.chsh_value >= 2 * Math.SQRT2 * 0.9 ? "text-safe" : "text-danger"}`}>
+              {step.chsh_value.toFixed(3)}
+            </span>
+          </div>
+        )}
       </div>
       {step.shared_key.length > 0 && (
         <div className="shared-key-display">
@@ -149,12 +185,37 @@ function ResultsPanel({ step }: { step: StepResponse }) {
   );
 }
 
+const PROTOCOL_INFO: Record<string, { name: string; description: string }> = {
+  bb84: {
+    name: "BB84",
+    description:
+      "The original QKD protocol by Bennett & Brassard (1984). Alice sends " +
+      "qubits encoded in two random bases; Bob measures in two random bases. " +
+      "They keep bits where bases match (~50% sift rate).",
+  },
+  b92: {
+    name: "B92",
+    description:
+      "A simplified protocol by Bennett (1992) using only two non-orthogonal " +
+      "states: |0⟩ for bit 0 and |+⟩ for bit 1. Bob's conclusive measurements " +
+      "(outcome = 1) reveal Alice's bit (~25% sift rate).",
+  },
+  e91: {
+    name: "E91",
+    description:
+      "Ekert's entanglement-based protocol (1991). Alice and Bob share Bell " +
+      "pairs and measure in random bases. Security is verified via CHSH " +
+      "inequality violation.",
+  },
+};
+
 export function App() {
   const [simId, setSimId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [numQubits, setNumQubits] = useState(20);
   const [eavesdropper, setEavesdropper] = useState(false);
+  const [protocol, setProtocol] = useState("bb84");
   const [error, setError] = useState<string | null>(null);
 
   const currentStep = steps.length > 0 ? steps[steps.length - 1] : null;
@@ -164,7 +225,7 @@ export function App() {
     setLoading(true);
     setError(null);
     try {
-      const id = await createSimulation("bb84", numQubits, eavesdropper);
+      const id = await createSimulation(protocol, numQubits, eavesdropper);
       setSimId(id);
       setSteps([]);
     } catch (e) {
@@ -172,7 +233,7 @@ export function App() {
     } finally {
       setLoading(false);
     }
-  }, [numQubits, eavesdropper]);
+  }, [protocol, numQubits, eavesdropper]);
 
   const handleStep = useCallback(async () => {
     if (!simId) return;
@@ -214,7 +275,9 @@ export function App() {
         <h1>
           <span className="logo-accent">QKD</span> Playground
         </h1>
-        <p className="subtitle">Interactive Quantum Key Distribution Simulator</p>
+        <p className="subtitle">
+          Interactive Quantum Key Distribution Simulator
+        </p>
       </header>
 
       <main className="app-main">
@@ -222,9 +285,22 @@ export function App() {
           <div className="setup-panel">
             <h2>Configure Simulation</h2>
             <p className="setup-description">
-              Simulate the BB84 quantum key distribution protocol. Alice and Bob will exchange
-              quantum states to establish a shared secret key.
+              {PROTOCOL_INFO[protocol]?.description}
             </p>
+
+            <div className="form-group">
+              <label htmlFor="protocol-select">Protocol</label>
+              <select
+                id="protocol-select"
+                className="protocol-select"
+                value={protocol}
+                onChange={(e) => setProtocol(e.target.value)}
+              >
+                <option value="bb84">BB84 — Bennett &amp; Brassard (1984)</option>
+                <option value="b92">B92 — Bennett (1992)</option>
+                <option value="e91">E91 — Ekert (1991)</option>
+              </select>
+            </div>
 
             <div className="form-group">
               <label htmlFor="num-qubits">Number of Qubits</label>
@@ -246,23 +322,31 @@ export function App() {
                   checked={eavesdropper}
                   onChange={(e) => setEavesdropper(e.target.checked)}
                 />
-                <span className="checkbox-text">Enable Eavesdropper (Eve)</span>
+                <span className="checkbox-text">
+                  Enable Eavesdropper (Eve)
+                </span>
               </label>
               {eavesdropper && (
                 <p className="eve-warning">
-                  Eve will intercept and re-send qubits, introducing ~25% errors detectable by Alice
-                  and Bob.
+                  Eve will intercept and re-send qubits, introducing ~25%
+                  errors detectable by Alice and Bob.
                 </p>
               )}
             </div>
 
-            <button className="btn btn-primary" onClick={handleCreate} disabled={loading}>
-              {loading ? "Creating…" : "Start BB84 Simulation"}
+            <button
+              className="btn btn-primary"
+              onClick={handleCreate}
+              disabled={loading}
+            >
+              {loading ? "Creating…" : `Start ${PROTOCOL_INFO[protocol]?.name} Simulation`}
             </button>
           </div>
         ) : (
           <div className="simulation-panel">
-            <ProgressBar currentPhase={currentStep?.phase ?? "preparation"} />
+            <ProgressBar
+              currentPhase={currentStep?.phase ?? "preparation"}
+            />
 
             <div className="controls">
               <button
@@ -270,12 +354,23 @@ export function App() {
                 onClick={handleStep}
                 disabled={loading || isComplete}
               >
-                {loading ? "Processing…" : isComplete ? "Complete" : "Next Step →"}
+                {loading
+                  ? "Processing…"
+                  : isComplete
+                    ? "Complete"
+                    : "Next Step →"}
               </button>
-              <button className="btn btn-secondary" onClick={handleReset} disabled={loading}>
+              <button
+                className="btn btn-secondary"
+                onClick={handleReset}
+                disabled={loading}
+              >
                 Reset
               </button>
-              <button className="btn btn-ghost" onClick={handleNewSimulation}>
+              <button
+                className="btn btn-ghost"
+                onClick={handleNewSimulation}
+              >
                 New Simulation
               </button>
             </div>
@@ -288,7 +383,9 @@ export function App() {
                   <span className="phase-badge">
                     {PHASE_LABELS[currentStep.phase] ?? currentStep.phase}
                   </span>
-                  <span className="step-number">Step {currentStep.step_index} of 5</span>
+                  <span className="step-number">
+                    Step {currentStep.step_index} of 5
+                  </span>
                 </div>
                 <p className="step-description">{currentStep.description}</p>
 
@@ -302,7 +399,9 @@ export function App() {
                 <h3>Step History</h3>
                 {steps.slice(0, -1).map((s, i) => (
                   <div key={i} className="history-item">
-                    <span className="history-phase">{PHASE_LABELS[s.phase] ?? s.phase}</span>
+                    <span className="history-phase">
+                      {PHASE_LABELS[s.phase] ?? s.phase}
+                    </span>
                     <span className="history-desc">{s.description}</span>
                   </div>
                 ))}
