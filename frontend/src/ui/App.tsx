@@ -1,10 +1,6 @@
 import { useCallback, useState } from "react";
 import type { StepResponse } from "../adapters";
-import {
-  createSimulation,
-  resetSimulation,
-  stepSimulation,
-} from "../adapters";
+import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
 import "./styles.css";
 
 const PHASE_LABELS: Record<string, string> = {
@@ -28,21 +24,14 @@ const PHASE_ORDER = [
 function BasisBadge({ basis }: { basis: string }) {
   const isRect = basis === "rectilinear";
   return (
-    <span
-      className={`basis-badge ${isRect ? "basis-rect" : "basis-diag"}`}
-      title={basis}
-    >
+    <span className={`basis-badge ${isRect ? "basis-rect" : "basis-diag"}`} title={basis}>
       {isRect ? "+" : "×"}
     </span>
   );
 }
 
 function BitCell({ value, highlight }: { value: number; highlight?: boolean }) {
-  return (
-    <span className={`bit-cell ${highlight ? "bit-highlight" : ""}`}>
-      {value}
-    </span>
-  );
+  return <span className={`bit-cell ${highlight ? "bit-highlight" : ""}`}>{value}</span>;
 }
 
 function QubitTable({ step }: { step: StepResponse }) {
@@ -92,10 +81,7 @@ function QubitTable({ step }: { step: StepResponse }) {
           <div className="qubit-row">
             <span className="row-label">Conclusive</span>
             {step.conclusive_mask.slice(0, maxShow).map((c, i) => (
-              <span
-                key={`c-${i}`}
-                className={`match-cell ${c ? "match-yes" : "match-no"}`}
-              >
+              <span key={`c-${i}`} className={`match-cell ${c ? "match-yes" : "match-no"}`}>
                 {c ? "✓" : "✗"}
               </span>
             ))}
@@ -106,10 +92,7 @@ function QubitTable({ step }: { step: StepResponse }) {
           <div className="qubit-row">
             <span className="row-label">Bases Match</span>
             {step.matching_bases.slice(0, maxShow).map((m, i) => (
-              <span
-                key={`m-${i}`}
-                className={`match-cell ${m ? "match-yes" : "match-no"}`}
-              >
+              <span key={`m-${i}`} className={`match-cell ${m ? "match-yes" : "match-no"}`}>
                 {m ? "✓" : "✗"}
               </span>
             ))}
@@ -166,7 +149,9 @@ function ResultsPanel({ step }: { step: StepResponse }) {
         {step.chsh_value !== null && (
           <div className="result-item">
             <span className="result-label">CHSH S Value</span>
-            <span className={`result-value ${step.chsh_value >= 2 * Math.SQRT2 * 0.9 ? "text-safe" : "text-danger"}`}>
+            <span
+              className={`result-value ${step.chsh_value >= 2 * Math.SQRT2 * 0.9 ? "text-safe" : "text-danger"}`}
+            >
               {step.chsh_value.toFixed(3)}
             </span>
           </div>
@@ -275,18 +260,14 @@ export function App() {
         <h1>
           <span className="logo-accent">QKD</span> Playground
         </h1>
-        <p className="subtitle">
-          Interactive Quantum Key Distribution Simulator
-        </p>
+        <p className="subtitle">Interactive Quantum Key Distribution Simulator</p>
       </header>
 
       <main className="app-main">
         {!simId ? (
           <div className="setup-panel">
             <h2>Configure Simulation</h2>
-            <p className="setup-description">
-              {PROTOCOL_INFO[protocol]?.description}
-            </p>
+            <p className="setup-description">{PROTOCOL_INFO[protocol]?.description}</p>
 
             <div className="form-group">
               <label htmlFor="protocol-select">Protocol</label>
@@ -322,31 +303,23 @@ export function App() {
                   checked={eavesdropper}
                   onChange={(e) => setEavesdropper(e.target.checked)}
                 />
-                <span className="checkbox-text">
-                  Enable Eavesdropper (Eve)
-                </span>
+                <span className="checkbox-text">Enable Eavesdropper (Eve)</span>
               </label>
               {eavesdropper && (
                 <p className="eve-warning">
-                  Eve will intercept and re-send qubits, introducing ~25%
-                  errors detectable by Alice and Bob.
+                  Eve will intercept and re-send qubits, introducing ~25% errors detectable by Alice
+                  and Bob.
                 </p>
               )}
             </div>
 
-            <button
-              className="btn btn-primary"
-              onClick={handleCreate}
-              disabled={loading}
-            >
+            <button className="btn btn-primary" onClick={handleCreate} disabled={loading}>
               {loading ? "Creating…" : `Start ${PROTOCOL_INFO[protocol]?.name} Simulation`}
             </button>
           </div>
         ) : (
           <div className="simulation-panel">
-            <ProgressBar
-              currentPhase={currentStep?.phase ?? "preparation"}
-            />
+            <ProgressBar currentPhase={currentStep?.phase ?? "preparation"} />
 
             <div className="controls">
               <button
@@ -354,23 +327,12 @@ export function App() {
                 onClick={handleStep}
                 disabled={loading || isComplete}
               >
-                {loading
-                  ? "Processing…"
-                  : isComplete
-                    ? "Complete"
-                    : "Next Step →"}
+                {loading ? "Processing…" : isComplete ? "Complete" : "Next Step →"}
               </button>
-              <button
-                className="btn btn-secondary"
-                onClick={handleReset}
-                disabled={loading}
-              >
+              <button className="btn btn-secondary" onClick={handleReset} disabled={loading}>
                 Reset
               </button>
-              <button
-                className="btn btn-ghost"
-                onClick={handleNewSimulation}
-              >
+              <button className="btn btn-ghost" onClick={handleNewSimulation}>
                 New Simulation
               </button>
             </div>
@@ -383,9 +345,7 @@ export function App() {
                   <span className="phase-badge">
                     {PHASE_LABELS[currentStep.phase] ?? currentStep.phase}
                   </span>
-                  <span className="step-number">
-                    Step {currentStep.step_index} of 5
-                  </span>
+                  <span className="step-number">Step {currentStep.step_index} of 5</span>
                 </div>
                 <p className="step-description">{currentStep.description}</p>
 
@@ -399,9 +359,7 @@ export function App() {
                 <h3>Step History</h3>
                 {steps.slice(0, -1).map((s, i) => (
                   <div key={i} className="history-item">
-                    <span className="history-phase">
-                      {PHASE_LABELS[s.phase] ?? s.phase}
-                    </span>
+                    <span className="history-phase">{PHASE_LABELS[s.phase] ?? s.phase}</span>
                     <span className="history-desc">{s.description}</span>
                   </div>
                 ))}
