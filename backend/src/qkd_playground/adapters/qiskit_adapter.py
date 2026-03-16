@@ -141,6 +141,23 @@ class EavesdroppingChannel(QuantumChannelPort):
 
     def __init__(self, measurement: MeasurementPort) -> None:
         self._measurement = measurement
+        self._eve_bases: list[Basis] = []
+        self._eve_results: list[BitValue] = []
+
+    @property
+    def eve_bases(self) -> list[Basis]:
+        """Return the bases Eve chose for interception."""
+        return list(self._eve_bases)
+
+    @property
+    def eve_results(self) -> list[BitValue]:
+        """Return Eve's measurement results."""
+        return list(self._eve_results)
+
+    def clear(self) -> None:
+        """Reset recorded Eve data for a new run."""
+        self._eve_bases = []
+        self._eve_results = []
 
     def transmit(self, qubit: Qubit) -> Qubit:
         """Eve intercepts, measures in random basis, resends.
@@ -149,6 +166,8 @@ class EavesdroppingChannel(QuantumChannelPort):
         """
         eve_basis = random.choice([Basis.RECTILINEAR, Basis.DIAGONAL])  # noqa: S311
         eve_result = self._measurement.measure(qubit, eve_basis)
+        self._eve_bases.append(eve_basis)
+        self._eve_results.append(eve_result.outcome)
         # Eve resends based on her measurement
         return self._measurement.prepare(eve_result.outcome, eve_basis)
 

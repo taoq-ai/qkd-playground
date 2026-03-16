@@ -1,7 +1,14 @@
 import { useCallback, useState } from "react";
 import type { StepResponse } from "../adapters";
 import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
-import { CircuitDiagram, ProgressBar, QubitTable, ResultsPanel } from "./components";
+import {
+  CircuitDiagram,
+  EveAlert,
+  EvePanel,
+  ProgressBar,
+  QubitTable,
+  ResultsPanel,
+} from "./components";
 import { PHASE_LABELS, PROTOCOL_INFO } from "./constants";
 import "./styles.css";
 
@@ -166,6 +173,12 @@ export function App() {
                   eavesdropper={eavesdropper}
                 />
                 <QubitTable step={currentStep} />
+                <EvePanel step={currentStep} eavesdropperEnabled={eavesdropper} />
+                <EveAlert
+                  errorRate={currentStep.error_rate}
+                  eavesdropperDetected={currentStep.eavesdropper_detected}
+                  protocol={protocol}
+                />
                 <ResultsPanel step={currentStep} />
               </div>
             )}

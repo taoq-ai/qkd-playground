@@ -18,6 +18,9 @@ export interface StepResponse {
   shared_key: number[];
   conclusive_mask: boolean[];
   chsh_value: number | null;
+  eve_intercepted: boolean;
+  eve_bases: string[];
+  eve_results: number[];
   is_complete: boolean;
 }
 

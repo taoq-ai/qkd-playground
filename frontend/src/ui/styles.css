@@ -559,6 +559,77 @@ body {
   height: auto;
 }
 
+/* Eve panel */
+.eve-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #7f1d1d40;
+  background: var(--danger-bg);
+}
+
+.eve-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.eve-panel-header h3 {
+  font-size: 0.9rem;
+  color: var(--danger);
+  margin: 0;
+}
+
+.eve-icon {
+  font-size: 1.1rem;
+}
+
+.eve-stats {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+}
+
+/* Eve alert */
+.eve-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.eve-alert strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.eve-alert p {
+  margin: 0;
+  color: var(--foreground-secondary);
+}
+
+.eve-alert-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.eve-alert-danger {
+  background: var(--danger-bg);
+  border: 1px solid #7f1d1d40;
+  color: var(--danger);
+}
+
+.eve-alert-safe {
+  background: var(--safe-bg);
+  border: 1px solid #14532d40;
+  color: var(--safe);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .app {
