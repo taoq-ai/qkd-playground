@@ -1,6 +1,12 @@
 export { BasisBadge } from "./BasisBadge";
 export { BitCell } from "./BitCell";
 export { CircuitDiagram } from "./CircuitDiagram";
+export { ConceptPanel } from "./ConceptPanel";
+export { EveAlert } from "./EveAlert";
+export { EvePanel } from "./EvePanel";
+export { KeyEfficiencyChart } from "./KeyEfficiencyChart";
 export { ProgressBar } from "./ProgressBar";
+export { QBERGauge } from "./QBERGauge";
 export { QubitTable } from "./QubitTable";
 export { ResultsPanel } from "./ResultsPanel";
+export { StatisticsPanel } from "./StatisticsPanel";

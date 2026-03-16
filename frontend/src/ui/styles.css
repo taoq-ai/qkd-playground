@@ -559,6 +559,199 @@ body {
   height: auto;
 }
 
+/* Eve panel */
+.eve-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #7f1d1d40;
+  background: var(--danger-bg);
+}
+
+.eve-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.eve-panel-header h3 {
+  font-size: 0.9rem;
+  color: var(--danger);
+  margin: 0;
+}
+
+.eve-icon {
+  font-size: 1.1rem;
+}
+
+.eve-stats {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+}
+
+/* Eve alert */
+.eve-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.eve-alert strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.eve-alert p {
+  margin: 0;
+  color: var(--foreground-secondary);
+}
+
+.eve-alert-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.eve-alert-danger {
+  background: var(--danger-bg);
+  border: 1px solid #7f1d1d40;
+  color: var(--danger);
+}
+
+.eve-alert-safe {
+  background: var(--safe-bg);
+  border: 1px solid #14532d40;
+  color: var(--safe);
+}
+
+/* Concept panels */
+.concept-panels {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.concept-panel {
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1rem;
+  background: var(--background-tertiary);
+  border-radius: 0 8px 8px 0;
+}
+
+.concept-summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.concept-summary::before {
+  content: "\25b6";
+  font-size: 0.6rem;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+
+.concept-panel[open] > .concept-summary::before {
+  transform: rotate(90deg);
+}
+
+.concept-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.concept-text {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--foreground);
+  line-height: 1.6;
+}
+
+.concept-detail {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--foreground-secondary);
+  line-height: 1.6;
+}
+
+/* Statistics panel */
+.statistics-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.statistics-panel h3 {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.qber-gauge {
+  display: flex;
+  justify-content: center;
+}
+
+.qber-gauge-svg {
+  width: 160px;
+  height: 95px;
+}
+
+.chart-title {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.key-efficiency-chart {
+  width: 100%;
+}
+
+.statistics-summary {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .app {
@@ -578,7 +771,8 @@ body {
     max-width: 3.5rem;
   }
 
-  .results-grid {
+  .results-grid,
+  .statistics-grid {
     grid-template-columns: 1fr;
   }
 
