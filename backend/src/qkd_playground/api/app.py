@@ -11,10 +11,12 @@ from pydantic import BaseModel, Field
 
 from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
+from qkd_playground.adapters.e91 import E91Protocol
 from qkd_playground.adapters.qiskit_adapter import (
     DefaultRandomness,
     EavesdroppingChannel,
     IdealQuantumChannel,
+    QiskitEntanglementAdapter,
     QiskitMeasurementAdapter,
 )
 from qkd_playground.domain.models import (
@@ -119,6 +121,9 @@ def _create_protocol(
     randomness = DefaultRandomness()
     if protocol_type == "b92":
         return B92Protocol(measurement, channel, randomness)
+    if protocol_type == "e91":
+        entanglement = QiskitEntanglementAdapter()
+        return E91Protocol(measurement, channel, entanglement, randomness)
     return BB84Protocol(measurement, channel, randomness)
 
 
