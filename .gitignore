@@ -6,6 +6,7 @@ __pycache__/
 *.egg
 dist/
 build/
+backend/src/qkd_playground/static/
 .eggs/
 *.whl
 .venv/
@@ -17,6 +18,7 @@ venv/
 # Node
 node_modules/
 frontend/dist/
+frontend/dist-spa/
 frontend/coverage/
 *.tsbuildinfo
 

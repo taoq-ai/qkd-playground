@@ -29,6 +29,9 @@ dependencies = [
     "pydantic>=2.0",
 ]
 
+[project.scripts]
+qkd-playground = "qkd_playground.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/taoq-ai/qkd-playground"
 Repository = "https://github.com/taoq-ai/qkd-playground"
@@ -41,6 +44,10 @@ raw-options = { root = ".." }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/qkd_playground"]
+
+# Custom build hook bundles frontend SPA into qkd_playground/static/
+# Build the SPA first: cd frontend && yarn build:spa
+[tool.hatch.build.hooks.custom]
 
 [dependency-groups]
 dev = [
