@@ -27,16 +27,19 @@ Quantum Key Distribution uses the laws of quantum mechanics to establish a share
 ## Screenshots
 
 ### Configure your simulation
+
 Choose the protocol, number of qubits, and optionally enable an eavesdropper (Eve).
 
 ![Setup](docs/assets/screenshots/setup.png)
 
 ### Step through the protocol
+
 Watch Alice prepare qubits, Bob measure them, and see basis comparison in real-time.
 
 ![Step Through](docs/assets/screenshots/step-through.png)
 
 ### Detect eavesdropping
+
 When Eve intercepts qubits, the error rate jumps above the threshold — the protocol detects the intrusion and discards the key.
 
 ![Eavesdropper Detected](docs/assets/screenshots/eavesdropper-detected.png)
@@ -52,6 +55,22 @@ qkd-playground --port 3000  # custom port
 ```
 
 The Python package includes the bundled frontend — no Node.js required.
+
+## Docker Setup
+
+Run the app using Docker:
+
+```bash
+docker-compose up --build
+```
+
+Then open [http://localhost:8000]
+
+### Health Check
+
+```bash
+curl http://localhost:8000/health
+```
 
 ### Development Setup
 
@@ -97,19 +116,20 @@ frontend/src/
 
 ## API Endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/simulation/create` | Create simulation (protocol, qubits, eavesdropper) |
-| `POST` | `/simulation/{id}/step` | Advance one protocol phase |
-| `POST` | `/simulation/{id}/run` | Run to completion |
-| `GET` | `/simulation/{id}/state` | Get full simulation state |
-| `POST` | `/simulation/{id}/reset` | Reset for re-run |
-| `GET` | `/protocols` | List available protocols |
-| `GET` | `/health` | Health check |
+| Method | Path                     | Description                                        |
+| ------ | ------------------------ | -------------------------------------------------- |
+| `POST` | `/simulation/create`     | Create simulation (protocol, qubits, eavesdropper) |
+| `POST` | `/simulation/{id}/step`  | Advance one protocol phase                         |
+| `POST` | `/simulation/{id}/run`   | Run to completion                                  |
+| `GET`  | `/simulation/{id}/state` | Get full simulation state                          |
+| `POST` | `/simulation/{id}/reset` | Reset for re-run                                   |
+| `GET`  | `/protocols`             | List available protocols                           |
+| `GET`  | `/health`                | Health check                                       |
 
 ## Supported Protocols
 
 ### BB84 (Bennett & Brassard 1984)
+
 1. **Preparation** — Alice chooses random bits and encodes each in a random basis (rectilinear + or diagonal ×)
 2. **Transmission** — Qubits travel through the quantum channel (Eve may intercept)
 3. **Measurement** — Bob measures each qubit in a randomly chosen basis
@@ -117,20 +137,22 @@ frontend/src/
 5. **Error Estimation** — Sample the sifted key to estimate error rate; >11% suggests eavesdropping
 
 ### B92 (Bennett 1992)
+
 Uses only two non-orthogonal states (|0⟩ and |+⟩). Bob's inconclusive measurements are discarded, yielding a lower but more robust key rate.
 
 ### E91 (Ekert 1991)
+
 Uses entangled Bell pairs. Alice and Bob perform measurements on their respective qubits. The CHSH inequality test detects eavesdropping without direct basis comparison.
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Python 3.11+, FastAPI, Qiskit, Pydantic |
-| Frontend | TypeScript, React 19, Vite, Recharts |
-| Testing | pytest (47 tests), vitest |
-| Docs | MkDocs Material |
-| CI/CD | GitHub Actions → PyPI + npm |
+| Layer    | Technology                              |
+| -------- | --------------------------------------- |
+| Backend  | Python 3.11+, FastAPI, Qiskit, Pydantic |
+| Frontend | TypeScript, React 19, Vite, Recharts    |
+| Testing  | pytest (47 tests), vitest               |
+| Docs     | MkDocs Material                         |
+| CI/CD    | GitHub Actions → PyPI + npm             |
 
 ## Testing
 
