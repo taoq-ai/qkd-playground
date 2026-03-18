@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    container_name: qkd-playground
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

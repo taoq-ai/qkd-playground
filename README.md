@@ -53,6 +53,13 @@ qkd-playground --port 3000  # custom port
 
 The Python package includes the bundled frontend — no Node.js required.
 
+### Docker
+
+```bash
+docker-compose up --build
+# App available at http://localhost:8000
+```
+
 ### Development Setup
 
 ```bash
