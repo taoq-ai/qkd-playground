@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
+from qkd_playground.adapters.decoy_bb84 import DecoyBB84Protocol
 from qkd_playground.adapters.e91 import E91Protocol
 from qkd_playground.adapters.qiskit_adapter import (
     CompositeChannel,
@@ -164,6 +165,8 @@ def _create_protocol(
         return B92Protocol(measurement, channel, randomness)
     if protocol_type == "sarg04":
         return SARG04Protocol(measurement, channel, randomness)
+    if protocol_type == "decoy_bb84":
+        return DecoyBB84Protocol(measurement, channel, randomness)
     if protocol_type == "e91":
         entanglement = QiskitEntanglementAdapter()
         return E91Protocol(measurement, channel, entanglement, randomness)
