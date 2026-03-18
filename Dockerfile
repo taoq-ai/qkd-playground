@@ -16,6 +16,7 @@ RUN yarn build
 FROM python:3.11-slim AS runtime
 
 ENV PYTHONUNBUFFERED=1
+ENV SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0
 
 WORKDIR /app
 
@@ -27,11 +28,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # Install Python dependencies first (layer caching)
 WORKDIR /app/backend
 COPY backend/pyproject.toml backend/uv.lock ./
-RUN SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy backend source and install the project
 COPY backend/ .
-RUN SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev
 
 # Copy built frontend into the static directory
 COPY --from=frontend-builder /app/frontend/dist ./static
