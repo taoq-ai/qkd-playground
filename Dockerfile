@@ -38,5 +38,7 @@ COPY --from=frontend-builder /app/frontend/dist ./static
 
 EXPOSE 8000
 
-ENTRYPOINT ["uv", "run", "uvicorn", "qkd_playground.api.app:create_app", "--factory"]
-CMD ["--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
