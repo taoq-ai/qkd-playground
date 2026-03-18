@@ -6,7 +6,6 @@ RUN corepack enable && corepack prepare yarn@4.6.0 --activate
 
 # Install dependencies first (layer caching)
 COPY frontend/package.json frontend/yarn.lock frontend/.yarnrc.yml ./
-COPY frontend/.yarn/ ./.yarn/
 RUN yarn install --immutable
 
 # Then copy source and build
