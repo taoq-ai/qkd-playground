@@ -101,6 +101,7 @@ export function App() {
                 <option value="bb84">BB84 &mdash; Bennett &amp; Brassard (1984)</option>
                 <option value="b92">B92 &mdash; Bennett (1992)</option>
                 <option value="e91">E91 &mdash; Ekert (1991)</option>
+                <option value="sarg04">SARG04 &mdash; Scarani, Acin, Ribordy &amp; Gisin (2004)</option>
               </select>
             </div>
 
