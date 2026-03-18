@@ -911,6 +911,238 @@ body {
   font-weight: 700;
 }
 
+/* Bell Test panel */
+.bell-test-panel {
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.bell-test-panel h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.bell-description {
+  color: var(--foreground-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.bell-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bell-angles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.bell-angle-group h3 {
+  font-size: 0.9rem;
+  color: var(--foreground);
+  margin-bottom: 0.75rem;
+}
+
+.bell-results {
+  margin-top: 1.5rem;
+}
+
+.bell-s-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.bell-s-quantum {
+  background: var(--safe-bg);
+  border: 1px solid #14532d40;
+}
+
+.bell-s-classical {
+  background: var(--danger-bg);
+  border: 1px solid #7f1d1d40;
+}
+
+.bell-s-label {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.bell-s-value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bell-s-quantum .bell-s-value {
+  color: var(--safe);
+}
+
+.bell-s-classical .bell-s-value {
+  color: var(--danger);
+}
+
+.bell-s-verdict {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.bell-s-quantum .bell-s-verdict {
+  color: var(--safe);
+}
+
+.bell-s-classical .bell-s-verdict {
+  color: var(--danger);
+}
+
+/* Bell gauge */
+.bell-gauge {
+  margin-bottom: 1.5rem;
+}
+
+.bell-gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.bell-gauge-track {
+  position: relative;
+  height: 1.25rem;
+  background: var(--background-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bell-gauge-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+  transition: width 0.3s ease;
+}
+
+.bell-gauge-quantum {
+  background: linear-gradient(90deg, var(--safe), #22c55e);
+}
+
+.bell-gauge-classic {
+  background: linear-gradient(90deg, var(--danger), #ef4444);
+}
+
+.bell-gauge-marker {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  z-index: 2;
+}
+
+.bell-gauge-classical {
+  background: var(--danger);
+}
+
+.bell-gauge-tsirelson {
+  background: var(--accent);
+}
+
+.bell-gauge-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.35rem;
+  font-size: 0.7rem;
+}
+
+.bell-legend-classical {
+  color: var(--danger);
+}
+
+.bell-legend-tsirelson {
+  color: var(--accent);
+}
+
+/* Correlation cards */
+.bell-corr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.bell-corr-card {
+  background: var(--background-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.bell-corr-angles {
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.bell-corr-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bell-formula {
+  background: var(--background-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--foreground-secondary);
+  font-family: "SF Mono", "Cascadia Code", monospace;
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+
+.bell-formula strong {
+  color: var(--accent);
+}
+
+.bell-info {
+  background: var(--background-tertiary);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1rem;
+}
+
+.bell-info h4 {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+.bell-info p {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+  line-height: 1.6;
+}
+
 /* Performance panel */
 .performance-panel {
   background: var(--background-secondary);
@@ -1031,7 +1263,6 @@ body {
   margin-bottom: 0.75rem;
 }
 
-
 /* Responsive */
 @media (max-width: 640px) {
   .app {
@@ -1059,6 +1290,18 @@ body {
   }
 
   .comparison-container {
+    padding: 1.5rem;
+  }
+
+  .bell-angles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bell-corr-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bell-test-panel {
     padding: 1.5rem;
   }
 

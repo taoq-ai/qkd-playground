@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
+from qkd_playground.adapters.bell_test import BellTestSimulator
 from qkd_playground.adapters.decoy_bb84 import DecoyBB84Protocol
 from qkd_playground.adapters.e91 import E91Protocol
 from qkd_playground.adapters.key_rate import (
@@ -133,6 +134,37 @@ class RunResponse(BaseModel):
     sifted_key_length: int
     raw_key_length: int
     eavesdropper_detected: bool
+
+
+class BellTestRequest(BaseModel):
+    """Request body for a Bell test experiment."""
+
+    alice_angles: tuple[float, float] = Field(
+        default=(0.0, 45.0), description="Alice's angles (a, a') in degrees"
+    )
+    bob_angles: tuple[float, float] = Field(
+        default=(22.5, 67.5), description="Bob's angles (b, b') in degrees"
+    )
+    num_trials: int = Field(
+        default=1000, ge=100, le=10000, description="Shots per angle pair"
+    )
+
+
+class CorrelationResponse(BaseModel):
+    """Correlation result for one angle pair."""
+
+    alice_angle: float
+    bob_angle: float
+    correlation: float
+    counts: dict[str, int]
+
+
+class BellTestResponse(BaseModel):
+    """Response for a Bell test experiment."""
+
+    correlations: list[CorrelationResponse]
+    s_value: float
+    num_trials: int
 
 
 # In-memory session storage
@@ -333,5 +365,28 @@ def create_app() -> FastAPI:
                 "dark_count_rate": dark_count_rate,
             },
         }
+
+    @app.post("/bell-test")
+    async def run_bell_test(req: BellTestRequest) -> BellTestResponse:
+        """Run a standalone CHSH Bell inequality test."""
+        simulator = BellTestSimulator()
+        result = simulator.run(
+            alice_angles=req.alice_angles,
+            bob_angles=req.bob_angles,
+            num_trials=req.num_trials,
+        )
+        return BellTestResponse(
+            correlations=[
+                CorrelationResponse(
+                    alice_angle=c.alice_angle,
+                    bob_angle=c.bob_angle,
+                    correlation=c.correlation,
+                    counts=c.counts,
+                )
+                for c in result.correlations
+            ],
+            s_value=result.s_value,
+            num_trials=result.num_trials,
+        )
 
     return app
