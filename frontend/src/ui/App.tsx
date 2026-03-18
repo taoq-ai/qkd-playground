@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { StepResponse } from "../adapters";
 import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
 import type { RunHistory } from "../domain";
-import { computeMetrics, getConceptsForPhase } from "../domain";
+import { AttackType, computeMetrics, getConceptsForPhase } from "../domain";
 import {
   BellTestPanel,
   BlochSpherePanel,
@@ -32,6 +32,8 @@ export function App() {
   const [protocol, setProtocol] = useState("bb84");
   const [noiseLevel, setNoiseLevel] = useState(0);
   const [lossRate, setLossRate] = useState(0);
+  const [attackType, setAttackType] = useState<string>(AttackType.INTERCEPT_RESEND);
+  const [interceptFraction, setInterceptFraction] = useState(50);
   const [error, setError] = useState<string | null>(null);
   const [runHistory, setRunHistory] = useState<RunHistory[]>([]);
   const lastRecordedSimId = useRef<string | null>(null);
@@ -68,6 +70,8 @@ export function App() {
         eavesdropper,
         noiseLevel / 100,
         lossRate / 100,
+        attackType,
+        interceptFraction / 100,
       );
       setSimId(id);
       setSteps([]);
@@ -76,7 +80,7 @@ export function App() {
     } finally {
       setLoading(false);
     }
-  }, [protocol, numQubits, eavesdropper, noiseLevel, lossRate]);
+  }, [protocol, numQubits, eavesdropper, noiseLevel, lossRate, attackType, interceptFraction]);
 
   const handleStep = useCallback(async () => {
     if (!simId) return;
@@ -216,10 +220,53 @@ export function App() {
                 <span className="checkbox-text">Enable Eavesdropper (Eve)</span>
               </label>
               {eavesdropper && (
-                <p className="eve-warning">
-                  Eve will intercept and re-send qubits, introducing ~25% errors detectable by Alice
-                  and Bob.
-                </p>
+                <>
+                  <div className="attack-selector">
+                    <label htmlFor="attack-type">Attack Type</label>
+                    <select
+                      id="attack-type"
+                      className="protocol-select"
+                      value={attackType}
+                      onChange={(e) => setAttackType(e.target.value)}
+                    >
+                      <option value={AttackType.INTERCEPT_RESEND}>
+                        Intercept-Resend &mdash; Full interception (~25% QBER)
+                      </option>
+                      <option value={AttackType.PNS}>
+                        PNS &mdash; Photon Number Splitting (low QBER)
+                      </option>
+                      <option value={AttackType.PARTIAL_INTERCEPT}>
+                        Partial Intercept &mdash; Configurable fraction
+                      </option>
+                    </select>
+                  </div>
+                  {attackType === AttackType.PARTIAL_INTERCEPT && (
+                    <div className="form-group attack-fraction-group">
+                      <label htmlFor="intercept-fraction">Intercept Fraction</label>
+                      <input
+                        id="intercept-fraction"
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={5}
+                        value={interceptFraction}
+                        onChange={(e) => setInterceptFraction(Number(e.target.value))}
+                      />
+                      <span className="range-value">{interceptFraction}%</span>
+                    </div>
+                  )}
+                  <p className="eve-warning">
+                    {attackType === AttackType.PNS
+                      ? "Eve splits multi-photon pulses without disturbing single-photon signals. " +
+                        "Low QBER but effective against standard BB84 with weak coherent sources."
+                      : attackType === AttackType.PARTIAL_INTERCEPT
+                        ? `Eve intercepts ${interceptFraction}% of qubits. ` +
+                          `Expected QBER: ~${((interceptFraction / 100) * 25).toFixed(1)}%. ` +
+                          `Lower detection probability but less information gained.`
+                        : "Eve will intercept and re-send qubits, introducing ~25% errors " +
+                          "detectable by Alice and Bob."}
+                  </p>
+                </>
               )}
             </div>
 

@@ -41,6 +41,13 @@ export enum ProtocolType {
   MDI_QKD = "mdi_qkd",
 }
 
+export enum AttackType {
+  NONE = "none",
+  INTERCEPT_RESEND = "intercept_resend",
+  PNS = "pns",
+  PARTIAL_INTERCEPT = "partial_intercept",
+}
+
 export { type ConceptEntry, CONCEPTS, getConceptsForPhase } from "./concepts";
 export {
   type SimulationMetrics,

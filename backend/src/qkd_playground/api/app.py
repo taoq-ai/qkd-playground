@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from qkd_playground.adapters.attacks import PartialInterceptChannel, PNSAttackChannel
 from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
 from qkd_playground.adapters.bell_test import BellTestSimulator
@@ -30,6 +31,7 @@ from qkd_playground.adapters.qiskit_adapter import (
 )
 from qkd_playground.adapters.sarg04 import SARG04Protocol
 from qkd_playground.domain.models import (
+    AttackType,
     ProtocolType,
     StepResult,
 )
@@ -49,6 +51,16 @@ class CreateSimulationRequest(BaseModel):
     )
     loss_rate: float = Field(
         default=0.0, ge=0.0, le=1.0, description="Photon loss rate"
+    )
+    attack_type: str = Field(
+        default="intercept_resend",
+        description="Attack type when eavesdropper is enabled",
+    )
+    intercept_fraction: float = Field(
+        default=0.5,
+        ge=0.0,
+        le=1.0,
+        description="Fraction of qubits to intercept (for partial intercept attack)",
     )
 
 
@@ -78,6 +90,9 @@ class StepResponse(BaseModel):
     reconciliation_corrections: int = 0
     amplified_key: list[int] = []
     privacy_amplification_ratio: float = 0.0
+    eve_information_gain: float = 0.0
+    intercepted_fraction: float = 0.0
+    multi_photon_fraction: float = 0.0
     is_complete: bool
 
     @classmethod
@@ -107,6 +122,9 @@ class StepResponse(BaseModel):
             reconciliation_corrections=step.reconciliation_corrections,
             amplified_key=[b.value for b in step.amplified_key],
             privacy_amplification_ratio=step.privacy_amplification_ratio,
+            eve_information_gain=step.eve_information_gain,
+            intercepted_fraction=step.intercepted_fraction,
+            multi_photon_fraction=step.multi_photon_fraction,
             is_complete=complete,
         )
 
@@ -177,6 +195,8 @@ def _create_protocol(
     eavesdropper: bool,
     noise_level: float = 0.0,
     loss_rate: float = 0.0,
+    attack_type: str = "intercept_resend",
+    intercept_fraction: float = 0.5,
 ) -> ProtocolPort:
     """Create a protocol instance based on type."""
     measurement = QiskitMeasurementAdapter()
@@ -187,7 +207,14 @@ def _create_protocol(
             NoisyChannel(depolarizing_rate=noise_level, loss_rate=loss_rate)
         )
     if eavesdropper:
-        channels.append(EavesdroppingChannel(measurement))
+        parsed_attack = AttackType(attack_type)
+        if parsed_attack == AttackType.PNS:
+            channels.append(PNSAttackChannel(measurement))
+        elif parsed_attack == AttackType.PARTIAL_INTERCEPT:
+            channels.append(PartialInterceptChannel(measurement, intercept_fraction))
+        elif parsed_attack == AttackType.INTERCEPT_RESEND:
+            channels.append(EavesdroppingChannel(measurement))
+        # AttackType.NONE: no eavesdropper channel added
 
     channel: QuantumChannelPort
     if not channels:
@@ -241,8 +268,15 @@ def create_app() -> FastAPI:
         req: CreateSimulationRequest,
     ) -> dict[str, str]:
         sim_id = str(uuid.uuid4())
+        # Determine effective attack type
+        effective_attack = req.attack_type if req.eavesdropper else "none"
         protocol = _create_protocol(
-            req.protocol, req.eavesdropper, req.noise_level, req.loss_rate
+            req.protocol,
+            req.eavesdropper,
+            req.noise_level,
+            req.loss_rate,
+            effective_attack,
+            req.intercept_fraction,
         )
         protocol.reset(req.num_qubits)
         _sessions[sim_id] = {

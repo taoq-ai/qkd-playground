@@ -2,7 +2,7 @@
 
 The BB84 protocol was proposed by Bennett and Brassard in 1984. It uses the
 quantum properties of single qubits to establish a shared secret key between
-two parties (Alice and Bob). Security relies on the no-cloning theorem —
+two parties (Alice and Bob). Security relies on the no-cloning theorem --
 any eavesdropper measuring qubits disturbs them detectably.
 
 Protocol steps:
@@ -16,7 +16,6 @@ Protocol steps:
 
 from __future__ import annotations
 
-from qkd_playground.adapters.qiskit_adapter import EavesdroppingChannel
 from qkd_playground.domain.models import (
     Basis,
     BitValue,
@@ -26,6 +25,7 @@ from qkd_playground.domain.models import (
     StepResult,
 )
 from qkd_playground.domain.ports import (
+    AttackPort,
     MeasurementPort,
     ProtocolPort,
     QuantumChannelPort,
@@ -72,6 +72,9 @@ class BB84Protocol(ProtocolPort):
         self._reconciliation_corrections: int = 0
         self._amplified_key: list[BitValue] = []
         self._privacy_amplification_ratio: float = 0.0
+        self._eve_information_gain: float = 0.0
+        self._intercepted_fraction: float = 0.0
+        self._multi_photon_fraction: float = 0.0
 
     def reset(self, num_qubits: int) -> None:
         """Reset protocol state for a new run."""
@@ -96,7 +99,10 @@ class BB84Protocol(ProtocolPort):
         self._reconciliation_corrections = 0
         self._amplified_key = []
         self._privacy_amplification_ratio = 0.0
-        if isinstance(self._channel, EavesdroppingChannel):
+        self._eve_information_gain = 0.0
+        self._intercepted_fraction = 0.0
+        self._multi_photon_fraction = 0.0
+        if isinstance(self._channel, AttackPort):
             self._channel.clear()
 
     def is_complete(self) -> bool:
@@ -163,9 +169,14 @@ class BB84Protocol(ProtocolPort):
             self._transmitted_qubits.append(transmitted)
 
         # Record Eve's interception data if eavesdropper is active
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._eve_bases = self._channel.eve_bases
             self._eve_results = self._channel.eve_results
+            self._eve_information_gain = self._channel.eve_information_gain
+            total = self._channel.total_count
+            if total > 0:
+                self._intercepted_fraction = self._channel.intercepted_count / total
+                self._multi_photon_fraction = self._channel.multi_photon_count / total
 
         self._phase = ProtocolPhase.MEASUREMENT
         self._step_index += 1
@@ -255,13 +266,13 @@ class BB84Protocol(ProtocolPort):
         rate = f"{self._error_rate:.1%}"
         if self._eavesdropper_detected:
             desc = (
-                f"Error rate is {rate} — above the "
+                f"Error rate is {rate} -- above the "
                 f"{thresh} threshold! Eavesdropping "
                 f"detected. Key is discarded."
             )
         else:
             desc = (
-                f"Error rate is {rate} — below the "
+                f"Error rate is {rate} -- below the "
                 f"{thresh} threshold. No eavesdropping "
                 f"detected. Shared key: "
                 f"{len(self._shared_key)} bits."
@@ -338,4 +349,7 @@ class BB84Protocol(ProtocolPort):
             reconciliation_corrections=self._reconciliation_corrections,
             amplified_key=list(self._amplified_key),
             privacy_amplification_ratio=self._privacy_amplification_ratio,
+            eve_information_gain=self._eve_information_gain,
+            intercepted_fraction=self._intercepted_fraction,
+            multi_photon_fraction=self._multi_photon_fraction,
         )

@@ -21,7 +21,6 @@ Sift rate: ~25% (vs BB84's ~50%), which is the tradeoff for PNS resistance.
 
 from __future__ import annotations
 
-from qkd_playground.adapters.qiskit_adapter import EavesdroppingChannel
 from qkd_playground.domain.models import (
     Basis,
     BitValue,
@@ -31,6 +30,7 @@ from qkd_playground.domain.models import (
     StepResult,
 )
 from qkd_playground.domain.ports import (
+    AttackPort,
     MeasurementPort,
     ProtocolPort,
     QuantumChannelPort,
@@ -91,7 +91,7 @@ class SARG04Protocol(ProtocolPort):
         self._transmitted_qubits = []
         self._eve_bases = []
         self._eve_results = []
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._channel.clear()
 
     def is_complete(self) -> bool:
@@ -154,7 +154,7 @@ class SARG04Protocol(ProtocolPort):
             self._transmitted_qubits.append(transmitted)
 
         # Record Eve's interception data if eavesdropper is active
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._eve_bases = self._channel.eve_bases
             self._eve_results = self._channel.eve_results
 
