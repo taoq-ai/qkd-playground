@@ -4,6 +4,7 @@ import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
 import { getConceptsForPhase } from "../domain";
 import {
   BellTestPanel,
+  BlochSpherePanel,
   CircuitDiagram,
   ComparisonView,
   ConceptPanel,
@@ -18,7 +19,7 @@ import {
 import { PHASE_LABELS, PROTOCOL_INFO } from "./constants";
 import "./styles.css";
 
-type AppTab = "simulator" | "compare" | "bell-test" | "performance";
+type AppTab = "simulator" | "compare" | "bell-test" | "performance" | "bloch-sphere";
 
 export function App() {
   const [activeTab, setActiveTab] = useState<AppTab>("simulator");
@@ -121,6 +122,12 @@ export function App() {
           >
             Performance
           </button>
+          <button
+            className={`nav-tab ${activeTab === "bloch-sphere" ? "nav-tab-active" : ""}`}
+            onClick={() => setActiveTab("bloch-sphere")}
+          >
+            Bloch Sphere
+          </button>
         </nav>
       </header>
 
@@ -131,6 +138,8 @@ export function App() {
           <ComparisonView />
         ) : activeTab === "bell-test" ? (
           <BellTestPanel />
+        ) : activeTab === "bloch-sphere" ? (
+          <BlochSpherePanel currentStep={currentStep} />
         ) : !simId ? (
           <div className="setup-panel">
             <h2>Configure Simulation</h2>
