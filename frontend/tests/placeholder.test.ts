@@ -14,9 +14,10 @@ describe("Domain types", () => {
 
   it("should list all protocol types", () => {
     const protocols = Object.values(ProtocolType);
-    expect(protocols).toHaveLength(3);
+    expect(protocols).toHaveLength(4);
     expect(protocols).toContain("bb84");
     expect(protocols).toContain("e91");
     expect(protocols).toContain("b92");
+    expect(protocols).toContain("sarg04");
   });
 });
