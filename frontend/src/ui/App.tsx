@@ -4,6 +4,7 @@ import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
 import { getConceptsForPhase } from "../domain";
 import {
   CircuitDiagram,
+  ComparisonView,
   ConceptPanel,
   EveAlert,
   EvePanel,
@@ -16,7 +17,7 @@ import {
 import { PHASE_LABELS, PROTOCOL_INFO } from "./constants";
 import "./styles.css";
 
-type AppTab = "simulator" | "performance";
+type AppTab = "simulator" | "compare" | "performance";
 
 export function App() {
   const [activeTab, setActiveTab] = useState<AppTab>("simulator");
@@ -102,6 +103,12 @@ export function App() {
             Simulator
           </button>
           <button
+            className={`nav-tab ${activeTab === "compare" ? "nav-tab-active" : ""}`}
+            onClick={() => setActiveTab("compare")}
+          >
+            Compare
+          </button>
+          <button
             className={`nav-tab ${activeTab === "performance" ? "nav-tab-active" : ""}`}
             onClick={() => setActiveTab("performance")}
           >
@@ -113,6 +120,8 @@ export function App() {
       <main className="app-main">
         {activeTab === "performance" ? (
           <PerformancePanel />
+        ) : activeTab === "compare" ? (
+          <ComparisonView />
         ) : !simId ? (
           <div className="setup-panel">
             <h2>Configure Simulation</h2>
