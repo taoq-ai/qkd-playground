@@ -45,6 +45,8 @@ jobs:
           enable-cache: true
       - name: Build package (with bundled frontend)
         working-directory: backend
+        env:
+          SETUPTOOLS_SCM_PRETEND_VERSION: ${{ needs.validate.outputs.version }}
         run: uv build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
