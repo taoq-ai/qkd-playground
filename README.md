@@ -5,8 +5,11 @@
 [![npm](https://img.shields.io/npm/v/@taoq-ai/qkd-playground)](https://www.npmjs.com/package/@taoq-ai/qkd-playground)
 [![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](https://taoq-ai.github.io/qkd-playground)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Demo](https://img.shields.io/badge/demo-Hugging%20Face%20Spaces-yellow)](https://huggingface.co/spaces/taoq-ai/qkd-playground)
 Interactive web-based **Quantum Key Distribution** simulator and learning platform.
 Step through **BB84**, **B92**, **E91**, and **SARG04** protocols, visualize qubit states with an interactive circuit diagram, explore quantum concepts, and simulate eavesdropping attacks — all powered by real quantum simulation with [Qiskit](https://qiskit.org/).
+
+**[▶ Try the live demo](https://huggingface.co/spaces/taoq-ai/qkd-playground)**
 
 ![Demo](docs/assets/demo.gif)
 
@@ -69,12 +72,14 @@ docker-compose up --build
 
 ### Deploy to Hugging Face Spaces
 
+The app is deployed at [huggingface.co/spaces/taoq-ai/qkd-playground](https://huggingface.co/spaces/taoq-ai/qkd-playground).
+
+To deploy your own instance:
+
 1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space)
 2. Select **Docker** as the Space SDK
 3. Connect your GitHub repository or push directly
 4. The Space will build and deploy automatically
-
-The app will be available at `https://huggingface.co/spaces/<your-username>/qkd-playground`
 
 ### Development Setup
 

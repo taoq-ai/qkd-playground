@@ -2,6 +2,8 @@
 
 **Interactive Quantum Key Distribution simulator and learning platform.**
 
+**[▶ Try the live demo](https://huggingface.co/spaces/taoq-ai/qkd-playground)**
+
 Step through BB84, B92, E91, and SARG04 protocols, visualize qubit states, simulate eavesdropping attacks, and explore real-world channel imperfections — all powered by Qiskit quantum simulation.
 
 ## What is QKD?
@@ -48,12 +50,14 @@ docker-compose up --build
 
 ### Deploy to Hugging Face Spaces
 
+The app is deployed at [huggingface.co/spaces/taoq-ai/qkd-playground](https://huggingface.co/spaces/taoq-ai/qkd-playground).
+
+To deploy your own instance:
+
 1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space)
 2. Select **Docker** as the Space SDK
 3. Connect your GitHub repository or push directly
 4. The Space will build and deploy automatically
-
-The app will be available at `https://huggingface.co/spaces/<your-username>/qkd-playground`
 
 ### Development Setup
 
