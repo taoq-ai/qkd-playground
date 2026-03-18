@@ -7,6 +7,7 @@ import {
   ConceptPanel,
   EveAlert,
   EvePanel,
+  PerformancePanel,
   ProgressBar,
   QubitTable,
   ResultsPanel,
@@ -15,7 +16,10 @@ import {
 import { PHASE_LABELS, PROTOCOL_INFO } from "./constants";
 import "./styles.css";
 
+type AppTab = "simulator" | "performance";
+
 export function App() {
+  const [activeTab, setActiveTab] = useState<AppTab>("simulator");
   const [simId, setSimId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepResponse[]>([]);
   const [loading, setLoading] = useState(false);
@@ -90,10 +94,26 @@ export function App() {
           <span className="logo-accent">QKD</span> Playground
         </h1>
         <p className="subtitle">Interactive Quantum Key Distribution Simulator</p>
+        <nav className="app-nav">
+          <button
+            className={`nav-tab ${activeTab === "simulator" ? "nav-tab-active" : ""}`}
+            onClick={() => setActiveTab("simulator")}
+          >
+            Simulator
+          </button>
+          <button
+            className={`nav-tab ${activeTab === "performance" ? "nav-tab-active" : ""}`}
+            onClick={() => setActiveTab("performance")}
+          >
+            Performance
+          </button>
+        </nav>
       </header>
 
       <main className="app-main">
-        {!simId ? (
+        {activeTab === "performance" ? (
+          <PerformancePanel />
+        ) : !simId ? (
           <div className="setup-panel">
             <h2>Configure Simulation</h2>
             <p className="setup-description">{PROTOCOL_INFO[protocol]?.description}</p>

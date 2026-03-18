@@ -90,3 +90,33 @@ export async function runSimulation(simulationId: string): Promise<StepResponse[
   const data = (await resp.json()) as { steps: StepResponse[] };
   return data.steps;
 }
+
+export interface RatePoint {
+  distance: number;
+  rate: number;
+}
+
+export interface PerformanceData {
+  protocols: Record<string, RatePoint[]>;
+  params: {
+    max_distance: number;
+    detector_efficiency: number;
+    dark_count_rate: number;
+  };
+}
+
+export async function getPerformanceData(
+  protocols: string[],
+  maxDistance: number,
+  detectorEfficiency: number,
+  darkCountRate: number,
+): Promise<PerformanceData> {
+  const params = new URLSearchParams({
+    protocols: protocols.join(","),
+    max_distance: maxDistance.toString(),
+    detector_efficiency: detectorEfficiency.toString(),
+    dark_count_rate: darkCountRate.toString(),
+  });
+  const resp = await fetch(`${BASE_URL}/performance?${params.toString()}`);
+  return (await resp.json()) as PerformanceData;
+}
