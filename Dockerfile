@@ -36,9 +36,13 @@ RUN SETUPTOOLS_SCM_PRETEND_VERSION=0.1.0 uv sync --frozen --no-dev
 # Copy built frontend into the static directory
 COPY --from=frontend-builder /app/frontend/dist ./static
 
-EXPOSE 8000
-
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
+
+# HF Spaces runs as uid 1000
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 7860 8000
 
 ENTRYPOINT ["/app/entrypoint.sh"]

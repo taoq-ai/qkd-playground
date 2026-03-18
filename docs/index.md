@@ -46,18 +46,14 @@ docker-compose up --build
 # App available at http://localhost:8000
 ```
 
-### Deploy to Railway
+### Deploy to Hugging Face Spaces
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/taoq-ai/qkd-playground)
+1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space)
+2. Select **Docker** as the Space SDK
+3. Connect your GitHub repository or push directly
+4. The Space will build and deploy automatically
 
-Or deploy manually with the [Railway CLI](https://docs.railway.com/guides/cli):
-
-```bash
-railway init
-railway up
-```
-
-**Live demo**: [https://qkd-playground.up.railway.app](https://qkd-playground.up.railway.app)
+The app will be available at `https://huggingface.co/spaces/<your-username>/qkd-playground`
 
 ### Development Setup
 
@@ -78,4 +74,4 @@ Then open [http://localhost:5173](http://localhost:5173).
 - **Packaging**: Frontend SPA bundled into the Python wheel via custom hatch build hook
 - **Testing**: pytest (80 tests), vitest
 - **Docs**: MkDocs Material
-- **Deployment**: Docker, Railway, PyPI, npm
+- **Deployment**: Docker, Hugging Face Spaces, PyPI, npm
