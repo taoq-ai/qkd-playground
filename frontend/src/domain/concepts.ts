@@ -231,6 +231,25 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["decoy_bb84"],
   },
   {
+    id: "protocol-comparison",
+    title: "Protocol Comparison",
+    summary:
+      "Different QKD protocols make different trade-offs between sift rate, " +
+      "security assumptions, and implementation complexity. Comparing them " +
+      "side-by-side highlights these differences.",
+    detail:
+      "BB84 offers ~50% sift rate with well-understood security proofs. B92 " +
+      "uses only two states for simpler implementation but has a lower ~25% " +
+      "sift rate. E91 leverages entanglement, providing security guaranteed " +
+      "by Bell inequality violations, at the cost of requiring entangled " +
+      "photon sources. SARG04 trades sift rate (~25%) for resistance to " +
+      "photon-number-splitting attacks in practical multi-photon sources. " +
+      "Running protocols under identical conditions reveals how these " +
+      "trade-offs affect QBER, key efficiency, and final key length.",
+    relatedPhases: ["complete"],
+    protocols: ["all"],
+  },
+  {
     id: "shared-key",
     title: "The Shared Secret Key",
     summary:

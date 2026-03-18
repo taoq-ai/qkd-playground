@@ -1,4 +1,5 @@
 export { BasisBadge } from "./BasisBadge";
+export { ComparisonView } from "./ComparisonView";
 export { BitCell } from "./BitCell";
 export { CircuitDiagram } from "./CircuitDiagram";
 export { ConceptPanel } from "./ConceptPanel";
