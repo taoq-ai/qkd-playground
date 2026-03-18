@@ -46,6 +46,19 @@ docker-compose up --build
 # App available at http://localhost:8000
 ```
 
+### Deploy to Railway
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/taoq-ai/qkd-playground)
+
+Or deploy manually with the [Railway CLI](https://docs.railway.com/guides/cli):
+
+```bash
+railway init
+railway up
+```
+
+**Live demo**: [https://qkd-playground.up.railway.app](https://qkd-playground.up.railway.app)
+
 ### Development Setup
 
 ```bash
@@ -65,4 +78,4 @@ Then open [http://localhost:5173](http://localhost:5173).
 - **Packaging**: Frontend SPA bundled into the Python wheel via custom hatch build hook
 - **Testing**: pytest (80 tests), vitest
 - **Docs**: MkDocs Material
-- **Deployment**: Docker, PyPI, npm
+- **Deployment**: Docker, Railway, PyPI, npm
