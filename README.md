@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
 Interactive web-based **Quantum Key Distribution** simulator and learning platform.
-Step through **BB84**, **B92**, and **E91** protocols, visualize qubit states with an interactive circuit diagram, explore quantum concepts, and simulate eavesdropping attacks — all powered by real quantum simulation with [Qiskit](https://qiskit.org/).
+Step through **BB84**, **B92**, **E91**, and **SARG04** protocols, visualize qubit states with an interactive circuit diagram, explore quantum concepts, and simulate eavesdropping attacks — all powered by real quantum simulation with [Qiskit](https://qiskit.org/).
 
 ![Demo](docs/assets/demo.gif)
 
@@ -17,26 +17,33 @@ Quantum Key Distribution uses the laws of quantum mechanics to establish a share
 
 ## Features
 
-- **Three QKD protocols** — BB84 (Bennett & Brassard 1984), B92 (Bennett 1992), E91 (Ekert 1991)
+- **Four QKD protocols** — BB84, B92, E91, and SARG04 (PNS-attack resistant)
 - **Interactive circuit visualizer** — SVG-based quantum circuit diagram that updates with each protocol phase
 - **Eavesdropper simulation** — Enable Eve to intercept qubits and see how error rates reveal her presence
-- **Concept explanation panels** — Learn about qubits, superposition, no-cloning, and Bell inequalities as you step through
+- **Channel noise models** — Configurable depolarizing noise and photon loss to simulate real-world quantum channels
+- **Information reconciliation** — Cascade-inspired error correction that fixes discrepancies between Alice and Bob's keys
+- **Privacy amplification** — Hash-based key compression that eliminates any information an eavesdropper may have gained
+- **Concept explanation panels** — Learn about qubits, superposition, no-cloning, Bell inequalities, and more as you step through
 - **Statistics dashboard** — QBER gauge, key efficiency chart, and sift rate metrics
 - **Real quantum simulation** — Powered by Qiskit's `StatevectorSampler`, not mock randomness
+- **Docker support** — One-command deployment with Docker Compose
 
 ## Screenshots
 
 ### Configure your simulation
+
 Choose the protocol, number of qubits, and optionally enable an eavesdropper (Eve).
 
 ![Setup](docs/assets/screenshots/setup.png)
 
 ### Step through the protocol
+
 Watch Alice prepare qubits, Bob measure them, and see basis comparison in real-time.
 
 ![Step Through](docs/assets/screenshots/step-through.png)
 
 ### Detect eavesdropping
+
 When Eve intercepts qubits, the error rate jumps above the threshold — the protocol detects the intrusion and discards the key.
 
 ![Eavesdropper Detected](docs/assets/screenshots/eavesdropper-detected.png)
@@ -86,7 +93,8 @@ This project uses **hexagonal architecture** (ports & adapters) in both backend 
 ```
 backend/src/qkd_playground/
   domain/        # Core models + port interfaces (framework-agnostic)
-  adapters/      # Qiskit measurement, BB84/B92/E91 protocols, channels
+  adapters/      # Protocol engines (BB84, B92, E91, SARG04), Qiskit simulation,
+                 #   channel noise models, post-processing (reconciliation + amplification)
   api/           # FastAPI driving adapter
 
 frontend/src/
@@ -106,7 +114,7 @@ frontend/src/
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/simulation/create` | Create simulation (protocol, qubits, eavesdropper) |
+| `POST` | `/simulation/create` | Create simulation (protocol, qubits, eavesdropper, noise) |
 | `POST` | `/simulation/{id}/step` | Advance one protocol phase |
 | `POST` | `/simulation/{id}/run` | Run to completion |
 | `GET` | `/simulation/{id}/state` | Get full simulation state |
@@ -117,17 +125,26 @@ frontend/src/
 ## Supported Protocols
 
 ### BB84 (Bennett & Brassard 1984)
+
 1. **Preparation** — Alice chooses random bits and encodes each in a random basis (rectilinear + or diagonal ×)
 2. **Transmission** — Qubits travel through the quantum channel (Eve may intercept)
 3. **Measurement** — Bob measures each qubit in a randomly chosen basis
 4. **Sifting** — Alice and Bob compare bases over a classical channel, keeping only matching positions (~50%)
 5. **Error Estimation** — Sample the sifted key to estimate error rate; >11% suggests eavesdropping
+6. **Reconciliation** — Cascade-inspired error correction to fix remaining discrepancies
+7. **Privacy Amplification** — Hash-based key compression to eliminate leaked information
 
 ### B92 (Bennett 1992)
-Uses only two non-orthogonal states (|0⟩ and |+⟩). Bob's inconclusive measurements are discarded, yielding a lower but more robust key rate.
+
+Uses only two non-orthogonal states (|0⟩ and |+⟩). Bob's inconclusive measurements are discarded, yielding a lower but more robust key rate (~25% sift rate).
 
 ### E91 (Ekert 1991)
+
 Uses entangled Bell pairs. Alice and Bob perform measurements on their respective qubits. The CHSH inequality test detects eavesdropping without direct basis comparison.
+
+### SARG04 (Scarani et al. 2004)
+
+A BB84 variant designed to resist **photon number splitting (PNS) attacks**. Instead of announcing bases during sifting, Alice announces non-orthogonal state pairs. This makes it harder for Eve to exploit multi-photon pulses, at the cost of a lower sift rate (~25% vs BB84's ~50%).
 
 ## Tech Stack
 
@@ -135,14 +152,14 @@ Uses entangled Bell pairs. Alice and Bob perform measurements on their respectiv
 |-------|-----------|
 | Backend | Python 3.11+, FastAPI, Qiskit, Pydantic |
 | Frontend | TypeScript, React 19, Vite, Recharts |
-| Testing | pytest (47 tests), vitest |
+| Testing | pytest (80 tests), vitest |
 | Docs | MkDocs Material |
-| CI/CD | GitHub Actions → PyPI + npm |
+| CI/CD | GitHub Actions, Docker |
 
 ## Testing
 
 ```bash
-# Backend — 47 tests (BB84/B92/E91 engines + API integration + eavesdropping)
+# Backend — 80 tests (BB84/B92/E91/SARG04 engines, channel noise, post-processing, API)
 cd backend && uv run pytest -v
 
 # Frontend — type and lint checks
@@ -180,6 +197,11 @@ bash scripts/record-demo.sh       # starts servers, records, creates GIF
 - [x] Eve comparison view with interception data
 - [x] Statistics and graphs (QBER gauge, key efficiency)
 - [x] Educational concept panels
+- [x] SARG04 protocol (PNS-attack resistant)
+- [x] Channel noise models (depolarizing + photon loss)
+- [x] Information reconciliation (Cascade-inspired)
+- [x] Privacy amplification (hash-based)
+- [x] Docker support
 
 ## License
 

@@ -13,21 +13,25 @@ graph TD
     end
 
     subgraph "Domain"
-        Models[Models<br/>Qubit, Basis, Key]
+        Models[Models<br/>Qubit, Basis, Key, ProtocolPhase]
         Ports[Port Interfaces<br/>ChannelPort, MeasurementPort, ProtocolPort]
     end
 
     subgraph "Driven Adapters"
+        Protocols[Protocol Engines<br/>BB84, B92, E91, SARG04]
         Qiskit[Qiskit Adapter<br/>Quantum simulation]
-        Noise[Noise Adapter<br/>Channel noise models]
+        Noise[Channel Models<br/>Depolarizing, Photon Loss]
+        PostProc[Post-Processing<br/>Reconciliation, Amplification]
     end
 
     API --> Ports
     UI --> API
     Tests --> Ports
     Ports --> Models
+    Protocols --> Ports
     Qiskit --> Ports
     Noise --> Ports
+    PostProc --> Protocols
 ```
 
 ## Key Principles
@@ -46,6 +50,12 @@ pip install qkd-playground
 qkd-playground
 ```
 
+Alternatively, deploy with Docker:
+
+```bash
+docker-compose up --build
+```
+
 The npm package (`@taoq-ai/qkd-playground`) remains available for consumers who want to embed the React components in their own applications.
 
 ## Backend Structure
@@ -53,15 +63,19 @@ The npm package (`@taoq-ai/qkd-playground`) remains available for consumers who 
 ```
 backend/src/qkd_playground/
 ├── domain/
-│   ├── models.py      # Qubit, Basis, BitValue, ProtocolResult
-│   └── ports.py       # QuantumChannelPort, MeasurementPort, ProtocolPort
+│   ├── models.py           # Qubit, Basis, BitValue, ProtocolPhase, ProtocolResult
+│   └── ports.py            # QuantumChannelPort, MeasurementPort, ProtocolPort
 ├── adapters/
-│   ├── bb84.py        # BB84 protocol implementation
-│   └── qiskit_adapter.py  # Qiskit-based implementations
+│   ├── bb84.py             # BB84 protocol engine
+│   ├── b92.py              # B92 protocol engine
+│   ├── e91.py              # E91 protocol engine
+│   ├── sarg04.py           # SARG04 protocol engine (PNS-resistant)
+│   ├── qiskit_adapter.py   # Qiskit simulation + NoisyChannel + CompositeChannel
+│   └── post_processing.py  # Information reconciliation + privacy amplification
 ├── api/
-│   └── app.py         # FastAPI application factory (serves API + bundled frontend)
-├── cli.py             # CLI entry point (qkd-playground command)
-└── static/            # Bundled frontend SPA (auto-generated at build time)
+│   └── app.py              # FastAPI application factory (serves API + bundled frontend)
+├── cli.py                  # CLI entry point (qkd-playground command)
+└── static/                 # Bundled frontend SPA (auto-generated at build time)
 ```
 
 ### Domain Models
@@ -69,7 +83,8 @@ backend/src/qkd_playground/
 - **`Qubit`** — A qubit prepared in a specific basis with a bit value
 - **`Basis`** — Rectilinear (Z) or Diagonal (X) measurement basis
 - **`BitValue`** — Classical bit: 0 or 1
-- **`ProtocolResult`** — Shared key, error rate, detection flags
+- **`ProtocolPhase`** — Protocol execution phases: preparation → transmission → measurement → sifting → error estimation → reconciliation → privacy amplification → complete
+- **`ProtocolResult`** — Shared key, error rate, detection flags, amplified key
 
 ### Port Interfaces
 
@@ -82,9 +97,9 @@ backend/src/qkd_playground/
 
 ```
 frontend/src/
-├── domain/       # TypeScript interfaces mirroring backend types
+├── domain/       # TypeScript interfaces, concept data, statistics computation
 ├── adapters/     # API client implementing SimulationPort
-└── ui/           # React components (presentation layer)
+└── ui/           # React components (CircuitDiagram, ConceptPanel, StatisticsPanel, etc.)
 ```
 
 The frontend follows the same hexagonal pattern: UI components depend only on domain types, and adapters handle API communication.
