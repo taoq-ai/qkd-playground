@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from qkd_playground.adapters.attacks import PartialInterceptChannel, PNSAttackChannel
@@ -425,5 +428,23 @@ def create_app() -> FastAPI:
             s_value=result.s_value,
             num_trials=result.num_trials,
         )
+
+    # Serve frontend static files (built SPA)
+    # In Docker: /app/backend/static, in dev/package: alongside the source
+    static_dir = Path(__file__).resolve().parent.parent / "static"
+    if not static_dir.is_dir():
+        static_dir = Path.cwd() / "static"
+
+    if static_dir.is_dir():
+        assets = StaticFiles(directory=static_dir / "assets")
+        app.mount("/assets", assets, name="assets")
+
+        @app.get("/{full_path:path}")
+        async def serve_spa(full_path: str) -> FileResponse:
+            """Serve the SPA index.html for all non-API routes."""
+            file_path = static_dir / full_path
+            if full_path and file_path.is_file():
+                return FileResponse(file_path)
+            return FileResponse(static_dir / "index.html")
 
     return app
