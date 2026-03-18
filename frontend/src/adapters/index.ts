@@ -29,6 +29,8 @@ export interface SimulationState {
   protocol: string;
   num_qubits: number;
   eavesdropper: boolean;
+  noise_level: number;
+  loss_rate: number;
   current_step: StepResponse | null;
   steps: StepResponse[];
   is_complete: boolean;
@@ -40,6 +42,8 @@ export async function createSimulation(
   protocol: string,
   numQubits: number,
   eavesdropper: boolean,
+  noiseLevel: number = 0,
+  lossRate: number = 0,
 ): Promise<string> {
   const resp = await fetch(`${BASE_URL}/simulation/create`, {
     method: "POST",
@@ -48,6 +52,8 @@ export async function createSimulation(
       protocol,
       num_qubits: numQubits,
       eavesdropper,
+      noise_level: noiseLevel,
+      loss_rate: lossRate,
     }),
   });
   const data = (await resp.json()) as { simulation_id: string };

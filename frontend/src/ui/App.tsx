@@ -22,6 +22,8 @@ export function App() {
   const [numQubits, setNumQubits] = useState(20);
   const [eavesdropper, setEavesdropper] = useState(false);
   const [protocol, setProtocol] = useState("bb84");
+  const [noiseLevel, setNoiseLevel] = useState(0);
+  const [lossRate, setLossRate] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const currentStep = steps.length > 0 ? steps[steps.length - 1] : null;
@@ -31,7 +33,13 @@ export function App() {
     setLoading(true);
     setError(null);
     try {
-      const id = await createSimulation(protocol, numQubits, eavesdropper);
+      const id = await createSimulation(
+        protocol,
+        numQubits,
+        eavesdropper,
+        noiseLevel / 100,
+        lossRate / 100,
+      );
       setSimId(id);
       setSteps([]);
     } catch (e) {
@@ -39,7 +47,7 @@ export function App() {
     } finally {
       setLoading(false);
     }
-  }, [protocol, numQubits, eavesdropper]);
+  }, [protocol, numQubits, eavesdropper, noiseLevel, lossRate]);
 
   const handleStep = useCallback(async () => {
     if (!simId) return;
@@ -133,6 +141,41 @@ export function App() {
                 </p>
               )}
             </div>
+
+            <div className="form-group">
+              <label htmlFor="noise-level">Channel Noise (Depolarization)</label>
+              <input
+                id="noise-level"
+                type="range"
+                min={0}
+                max={50}
+                step={1}
+                value={noiseLevel}
+                onChange={(e) => setNoiseLevel(Number(e.target.value))}
+              />
+              <span className="range-value">{noiseLevel}%</span>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="loss-rate">Photon Loss</label>
+              <input
+                id="loss-rate"
+                type="range"
+                min={0}
+                max={50}
+                step={1}
+                value={lossRate}
+                onChange={(e) => setLossRate(Number(e.target.value))}
+              />
+              <span className="range-value">{lossRate}%</span>
+            </div>
+
+            {(noiseLevel > 0 || lossRate > 0) && (
+              <p className="noise-info">
+                Channel imperfections will introduce errors even without an eavesdropper, modeling
+                real-world fiber optic conditions.
+              </p>
+            )}
 
             <button className="btn btn-primary" onClick={handleCreate} disabled={loading}>
               {loading ? "Creating\u2026" : `Start ${PROTOCOL_INFO[protocol]?.name} Simulation`}
