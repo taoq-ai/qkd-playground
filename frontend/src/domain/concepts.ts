@@ -193,7 +193,7 @@ export const CONCEPTS: readonly ConceptEntry[] = [
       "more bits must be sacrificed. The result is a shorter but provably " +
       "secure final key.",
     relatedPhases: ["privacy_amplification"],
-    protocols: ["all"]
+    protocols: ["all"],
   },
   {
     id: "shared-key",
