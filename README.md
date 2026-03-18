@@ -5,10 +5,11 @@
 [![npm](https://img.shields.io/npm/v/@taoq-ai/qkd-playground)](https://www.npmjs.com/package/@taoq-ai/qkd-playground)
 [![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](https://taoq-ai.github.io/qkd-playground)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/taoq-ai/qkd-playground)
-
+[![Demo](https://img.shields.io/badge/demo-Hugging%20Face%20Spaces-yellow)](https://huggingface.co/spaces/taoq-ai/qkd-playground)
 Interactive web-based **Quantum Key Distribution** simulator and learning platform.
 Step through **BB84**, **B92**, **E91**, and **SARG04** protocols, visualize qubit states with an interactive circuit diagram, explore quantum concepts, and simulate eavesdropping attacks — all powered by real quantum simulation with [Qiskit](https://qiskit.org/).
+
+**[▶ Try the live demo](https://huggingface.co/spaces/taoq-ai/qkd-playground)**
 
 ![Demo](docs/assets/demo.gif)
 
@@ -28,7 +29,7 @@ Quantum Key Distribution uses the laws of quantum mechanics to establish a share
 - **Statistics dashboard** — QBER gauge, key efficiency chart, and sift rate metrics
 - **Real quantum simulation** — Powered by Qiskit's `StatevectorSampler`, not mock randomness
 - **Docker support** — One-command deployment with Docker Compose
-- **Railway deploy** — One-click cloud deployment with Railway
+- **Hugging Face Spaces** — One-click cloud deployment with Hugging Face Spaces
 
 ## Screenshots
 
@@ -69,21 +70,18 @@ docker-compose up --build
 # App available at http://localhost:8000
 ```
 
-### Deploy to Railway
+### Deploy to Hugging Face Spaces
 
-One-click deploy:
+The app is deployed at [huggingface.co/spaces/taoq-ai/qkd-playground](https://huggingface.co/spaces/taoq-ai/qkd-playground).
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/taoq-ai/qkd-playground)
+Automatic deployment: every push to `main` is automatically deployed to the live demo via GitHub Actions. Set the `HF_TOKEN` repository secret to enable this.
 
-Or deploy manually:
+To deploy your own instance:
 
-1. Install the [Railway CLI](https://docs.railway.com/guides/cli) and log in
-2. Create a new project: `railway init`
-3. Deploy: `railway up`
-
-Railway automatically sets the `PORT` environment variable. The included `railway.toml` and `railway.json` handle build and deploy configuration.
-
-**Live demo**: [https://qkd-playground.up.railway.app](https://qkd-playground.up.railway.app)
+1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space)
+2. Select **Docker** as the Space SDK
+3. Connect your GitHub repository or push directly
+4. The Space will build and deploy automatically
 
 ### Development Setup
 
@@ -172,7 +170,7 @@ A BB84 variant designed to resist **photon number splitting (PNS) attacks**. Ins
 | Frontend | TypeScript, React 19, Vite, Recharts |
 | Testing | pytest (80 tests), vitest |
 | Docs | MkDocs Material |
-| CI/CD | GitHub Actions, Docker, Railway |
+| CI/CD | GitHub Actions, Docker, Hugging Face Spaces |
 
 ## Testing
 
@@ -220,7 +218,7 @@ bash scripts/record-demo.sh       # starts servers, records, creates GIF
 - [x] Information reconciliation (Cascade-inspired)
 - [x] Privacy amplification (hash-based)
 - [x] Docker support
-- [x] Railway cloud deployment
+- [x] Hugging Face Spaces deployment
 
 ## License
 

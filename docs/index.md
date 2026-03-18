@@ -2,6 +2,8 @@
 
 **Interactive Quantum Key Distribution simulator and learning platform.**
 
+**[▶ Try the live demo](https://huggingface.co/spaces/taoq-ai/qkd-playground)**
+
 Step through BB84, B92, E91, and SARG04 protocols, visualize qubit states, simulate eavesdropping attacks, and explore real-world channel imperfections — all powered by Qiskit quantum simulation.
 
 ## What is QKD?
@@ -46,18 +48,16 @@ docker-compose up --build
 # App available at http://localhost:8000
 ```
 
-### Deploy to Railway
+### Deploy to Hugging Face Spaces
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/taoq-ai/qkd-playground)
+The app is deployed at [huggingface.co/spaces/taoq-ai/qkd-playground](https://huggingface.co/spaces/taoq-ai/qkd-playground).
 
-Or deploy manually with the [Railway CLI](https://docs.railway.com/guides/cli):
+To deploy your own instance:
 
-```bash
-railway init
-railway up
-```
-
-**Live demo**: [https://qkd-playground.up.railway.app](https://qkd-playground.up.railway.app)
+1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space)
+2. Select **Docker** as the Space SDK
+3. Connect your GitHub repository or push directly
+4. The Space will build and deploy automatically
 
 ### Development Setup
 
@@ -78,4 +78,4 @@ Then open [http://localhost:5173](http://localhost:5173).
 - **Packaging**: Frontend SPA bundled into the Python wheel via custom hatch build hook
 - **Testing**: pytest (80 tests), vitest
 - **Docs**: MkDocs Material
-- **Deployment**: Docker, Railway, PyPI, npm
+- **Deployment**: Docker, Hugging Face Spaces, PyPI, npm
