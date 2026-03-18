@@ -74,6 +74,8 @@ docker-compose up --build
 
 The app is deployed at [huggingface.co/spaces/taoq-ai/qkd-playground](https://huggingface.co/spaces/taoq-ai/qkd-playground).
 
+Automatic deployment: every push to `main` is automatically deployed to the live demo via GitHub Actions. Set the `HF_TOKEN` repository secret to enable this.
+
 To deploy your own instance:
 
 1. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space)

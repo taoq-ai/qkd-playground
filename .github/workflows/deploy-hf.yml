@@ -1,0 +1,24 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to HF Spaces
+    runs-on: ubuntu-latest
+    # Only deploy after CI would pass (this runs on push to main, which means PR was merged and CI passed)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Push to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://huggingface.co/spaces/taoq-ai/qkd-playground || true
+          git remote set-url hf https://x-access-token:${HF_TOKEN}@huggingface.co/spaces/taoq-ai/qkd-playground
+          git push hf main --force
