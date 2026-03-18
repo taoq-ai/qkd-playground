@@ -8,12 +8,21 @@ jobs:
   deploy:
     name: Deploy to HF Spaces
     runs-on: ubuntu-latest
-    # Only deploy after CI would pass (this runs on push to main, which means PR was merged and CI passed)
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Migrate binaries to Git LFS for HF
+        run: |
+          git lfs install
+          git lfs migrate import --include="*.gif,*.gz,*.png" --everything --yes
 
       - name: Push to Hugging Face Spaces
         env:
