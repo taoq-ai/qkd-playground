@@ -56,4 +56,11 @@ export const PROTOCOL_INFO: Record<string, { name: string; description: string }
       "multiple intensity levels (signal, decoy, vacuum) to detect photon number " +
       "splitting (PNS) attacks. Enables secure key distribution with real laser sources.",
   },
+  mdi_qkd: {
+    name: "MDI-QKD",
+    description:
+      "Measurement-Device-Independent QKD eliminates all detector side-channel " +
+      "attacks by placing the measurement device at an untrusted relay (Charlie). " +
+      "Alice and Bob both send qubits to Charlie for Bell State Measurement (~12.5% sift rate).",
+  },
 };

@@ -151,6 +151,9 @@ export function App() {
                   SARG04 &mdash; Scarani, Acin, Ribordy &amp; Gisin (2004)
                 </option>
                 <option value="decoy_bb84">Decoy-State BB84 &mdash; Practical WCP Protocol</option>
+                <option value="mdi_qkd">
+                  MDI-QKD &mdash; Measurement-Device-Independent (2012)
+                </option>
               </select>
             </div>
 
