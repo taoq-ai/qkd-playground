@@ -212,7 +212,7 @@ export function App() {
                   <span className="phase-badge">
                     {PHASE_LABELS[currentStep.phase] ?? currentStep.phase}
                   </span>
-                  <span className="step-number">Step {currentStep.step_index} of 5</span>
+                  <span className="step-number">Step {currentStep.step_index} of 7</span>
                 </div>
                 <p className="step-description">{currentStep.description}</p>
 

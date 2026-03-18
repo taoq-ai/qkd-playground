@@ -55,7 +55,7 @@ class TestBB84Protocol:
         assert result.error_rate == 0.0
         assert result.eavesdropper_detected is False
         assert len(result.shared_key) > 0
-        assert len(result.steps) == 5  # 5 phases
+        assert len(result.steps) == 7  # 7 phases
 
     def test_run_with_eavesdropper_detects_eve(self) -> None:
         """Eavesdropper should introduce detectable errors (~25%)."""
@@ -91,7 +91,8 @@ class TestBB84Protocol:
         # All bases match, so sifted key = raw key
         assert result.sifted_key_length == 10
         assert result.error_rate == 0.0
-        assert len(result.shared_key) == 10
+        # Privacy amplification compresses key (~90% retention at 0% error)
+        assert len(result.shared_key) >= 8
 
     def test_step_through_phases(self) -> None:
         """Stepping through should visit all phases in order."""
@@ -112,6 +113,8 @@ class TestBB84Protocol:
             ProtocolPhase.MEASUREMENT,
             ProtocolPhase.SIFTING,
             ProtocolPhase.ERROR_ESTIMATION,
+            ProtocolPhase.RECONCILIATION,
+            ProtocolPhase.PRIVACY_AMPLIFICATION,
             ProtocolPhase.COMPLETE,
         ]
         assert phases == expected

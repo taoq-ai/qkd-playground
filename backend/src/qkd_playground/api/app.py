@@ -66,6 +66,11 @@ class StepResponse(BaseModel):
     eve_intercepted: bool = False
     eve_bases: list[str] = []
     eve_results: list[int] = []
+    reconciled_key_alice: list[int] = []
+    reconciled_key_bob: list[int] = []
+    reconciliation_corrections: int = 0
+    amplified_key: list[int] = []
+    privacy_amplification_ratio: float = 0.0
     is_complete: bool
 
     @classmethod
@@ -90,6 +95,11 @@ class StepResponse(BaseModel):
             eve_intercepted=step.eve_intercepted,
             eve_bases=[b.value for b in step.eve_bases],
             eve_results=[b.value for b in step.eve_results],
+            reconciled_key_alice=[b.value for b in step.reconciled_key_alice],
+            reconciled_key_bob=[b.value for b in step.reconciled_key_bob],
+            reconciliation_corrections=step.reconciliation_corrections,
+            amplified_key=[b.value for b in step.amplified_key],
+            privacy_amplification_ratio=step.privacy_amplification_ratio,
             is_complete=complete,
         )
 

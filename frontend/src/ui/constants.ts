@@ -4,6 +4,8 @@ export const PHASE_LABELS: Record<string, string> = {
   measurement: "Measurement",
   sifting: "Sifting",
   error_estimation: "Error Estimation",
+  reconciliation: "Reconciliation",
+  privacy_amplification: "Privacy Amplification",
   complete: "Complete",
 };
 
@@ -13,6 +15,8 @@ export const PHASE_ORDER = [
   "measurement",
   "sifting",
   "error_estimation",
+  "reconciliation",
+  "privacy_amplification",
   "complete",
 ];
 

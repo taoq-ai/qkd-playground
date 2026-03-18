@@ -63,7 +63,7 @@ def test_b92_sift_rate() -> None:
 
 
 def test_b92_step_by_step() -> None:
-    """B92 should go through all 5 phases in order."""
+    """B92 should go through all 7 phases in order."""
     proto = _make_protocol()
     proto.reset(20)
 
@@ -72,6 +72,8 @@ def test_b92_step_by_step() -> None:
         ProtocolPhase.MEASUREMENT,
         ProtocolPhase.SIFTING,
         ProtocolPhase.ERROR_ESTIMATION,
+        ProtocolPhase.RECONCILIATION,
+        ProtocolPhase.PRIVACY_AMPLIFICATION,
         ProtocolPhase.COMPLETE,
     ]
 

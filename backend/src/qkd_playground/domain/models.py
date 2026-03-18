@@ -28,6 +28,8 @@ class ProtocolPhase(Enum):
     MEASUREMENT = "measurement"
     SIFTING = "sifting"
     ERROR_ESTIMATION = "error_estimation"
+    RECONCILIATION = "reconciliation"
+    PRIVACY_AMPLIFICATION = "privacy_amplification"
     COMPLETE = "complete"
 
 
@@ -70,6 +72,11 @@ class StepResult:
     eve_intercepted: bool = False
     eve_bases: list[Basis] = field(default_factory=list)
     eve_results: list[BitValue] = field(default_factory=list)
+    reconciled_key_alice: list[BitValue] = field(default_factory=list)
+    reconciled_key_bob: list[BitValue] = field(default_factory=list)
+    reconciliation_corrections: int = 0
+    amplified_key: list[BitValue] = field(default_factory=list)
+    privacy_amplification_ratio: float = 0.0
 
 
 @dataclass
