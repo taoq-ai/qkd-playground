@@ -120,3 +120,33 @@ export async function getPerformanceData(
   const resp = await fetch(`${BASE_URL}/performance?${params.toString()}`);
   return (await resp.json()) as PerformanceData;
 }
+
+export interface BellTestCorrelation {
+  alice_angle: number;
+  bob_angle: number;
+  correlation: number;
+  counts: Record<string, number>;
+}
+
+export interface BellTestResponse {
+  correlations: BellTestCorrelation[];
+  s_value: number;
+  num_trials: number;
+}
+
+export async function runBellTest(
+  aliceAngles: [number, number],
+  bobAngles: [number, number],
+  numTrials: number = 1000,
+): Promise<BellTestResponse> {
+  const resp = await fetch(`${BASE_URL}/bell-test`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      alice_angles: aliceAngles,
+      bob_angles: bobAngles,
+      num_trials: numTrials,
+    }),
+  });
+  return (await resp.json()) as BellTestResponse;
+}

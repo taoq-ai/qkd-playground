@@ -136,13 +136,31 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     title: "Bell Inequality & CHSH Test",
     summary:
       "The CHSH test measures quantum correlations between entangled " +
-      "particles. A value of S > 2 proves genuine quantum entanglement.",
+      "particles. A value of S > 2 proves genuine quantum entanglement " +
+      "and rules out local hidden variable theories.",
     detail:
-      "Non-matching basis measurements are used to compute the CHSH " +
-      "correlation coefficient S. For perfectly entangled pairs, S can " +
-      "reach 2\u221A2 \u2248 2.83, violating the classical limit of 2. " +
-      "If Eve intercepts the qubits, entanglement is broken and S drops " +
-      "toward the classical bound, revealing her presence.",
+      "The CHSH inequality uses four measurement settings: Alice chooses " +
+      "between angles a and a', Bob between b and b'. The parameter " +
+      "S = E(a,b) - E(a,b') + E(a',b) + E(a',b') is bounded by 2 for " +
+      "any classical (local hidden variable) model. Quantum mechanics " +
+      "allows S up to 2\u221A2 \u2248 2.83. The optimal angles for " +
+      "maximal violation are a=0\u00B0, a'=45\u00B0, b=22.5\u00B0, b'=67.5\u00B0.",
+    relatedPhases: ["error_estimation"],
+    protocols: ["e91"],
+  },
+  {
+    id: "tsirelson-bound",
+    title: "Tsirelson's Bound",
+    summary:
+      "Tsirelson's bound is the maximum value of the CHSH parameter " +
+      "allowed by quantum mechanics: S \u2264 2\u221A2 \u2248 2.828.",
+    detail:
+      "While classical physics limits CHSH correlations to S \u2264 2, " +
+      "quantum mechanics allows up to S = 2\u221A2. This upper limit, " +
+      "proved by Boris Tsirelson in 1980, cannot be exceeded even with " +
+      "entanglement. It sits between the classical bound (2) and the " +
+      "algebraic maximum (4), showing that quantum correlations are " +
+      "stronger than classical but not as strong as mathematically possible.",
     relatedPhases: ["error_estimation"],
     protocols: ["e91"],
   },
