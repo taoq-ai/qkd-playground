@@ -18,6 +18,7 @@ from qkd_playground.adapters.key_rate import (
     calculate_key_rate,
     calculate_plob_bound,
 )
+from qkd_playground.adapters.mdi_qkd import MDIQKDProtocol
 from qkd_playground.adapters.qiskit_adapter import (
     CompositeChannel,
     DefaultRandomness,
@@ -203,6 +204,8 @@ def _create_protocol(
         return SARG04Protocol(measurement, channel, randomness)
     if protocol_type == "decoy_bb84":
         return DecoyBB84Protocol(measurement, channel, randomness)
+    if protocol_type == "mdi_qkd":
+        return MDIQKDProtocol(measurement, channel, randomness)
     if protocol_type == "e91":
         entanglement = QiskitEntanglementAdapter()
         return E91Protocol(measurement, channel, entanglement, randomness)

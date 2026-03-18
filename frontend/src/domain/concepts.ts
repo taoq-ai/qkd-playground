@@ -249,6 +249,63 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["decoy_bb84"],
   },
   {
+    id: "measurement-device-independence",
+    title: "Measurement-Device Independence",
+    summary:
+      "MDI-QKD removes all detector side-channel attacks by delegating " +
+      "measurement to an untrusted third party (Charlie). Security relies " +
+      "only on the preparation devices of Alice and Bob.",
+    detail:
+      "Practical QKD implementations are vulnerable to detector side-channel " +
+      "attacks such as blinding, time-shift, and after-gate attacks that " +
+      "exploit imperfections in single-photon detectors. MDI-QKD solves this " +
+      "by having Alice and Bob both send qubits to a central relay (Charlie) " +
+      "who performs the measurement. Even if Charlie's detectors are completely " +
+      "controlled by an adversary, the protocol remains secure because Charlie " +
+      "never learns the individual qubit states, only Bell state measurement " +
+      "outcomes.",
+    relatedPhases: ["preparation", "transmission"],
+    protocols: ["mdi_qkd"],
+  },
+  {
+    id: "bell-state-measurement",
+    title: "Bell State Measurement",
+    summary:
+      "Charlie performs a joint measurement on one qubit from Alice and one " +
+      "from Bob, projecting the pair onto a Bell state. With linear optics, " +
+      "only 2 of 4 Bell states can be distinguished (~50% success rate).",
+    detail:
+      "A Bell State Measurement (BSM) is a joint quantum measurement that " +
+      "projects two qubits onto one of the four maximally entangled Bell " +
+      "states. In MDI-QKD, Charlie receives one qubit from Alice and one " +
+      "from Bob and performs a BSM on each pair. With linear optics (beam " +
+      "splitters and detectors), only the antisymmetric states can be " +
+      "identified, limiting the success rate to ~50%. When a BSM succeeds, " +
+      "Charlie announces which Bell state was detected, allowing Alice and " +
+      "Bob to establish correlated key bits.",
+    relatedPhases: ["measurement"],
+    protocols: ["mdi_qkd"],
+  },
+  {
+    id: "untrusted-relay",
+    title: "Untrusted Relay",
+    summary:
+      "Charlie acts as an untrusted relay node. Even if Charlie is fully " +
+      "compromised or malicious, the security of the key between Alice " +
+      "and Bob is not affected.",
+    detail:
+      "In MDI-QKD, Charlie's role is limited to performing Bell State " +
+      "Measurements and announcing the results. Charlie never has access " +
+      "to the individual qubit states sent by Alice or Bob, only to the " +
+      "joint measurement outcomes. A dishonest Charlie can reduce the key " +
+      "rate (by lying about BSM results) but cannot learn any information " +
+      "about the final key. This makes MDI-QKD ideal for network " +
+      "topologies where a central node connects multiple users who do " +
+      "not need to trust the infrastructure operator.",
+    relatedPhases: ["measurement", "sifting"],
+    protocols: ["mdi_qkd"],
+  },
+  {
     id: "protocol-comparison",
     title: "Protocol Comparison",
     summary:
