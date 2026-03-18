@@ -49,4 +49,11 @@ export const PROTOCOL_INFO: Record<string, { name: string; description: string }
       "the same 4 states as BB84 but with modified sifting: Alice announces " +
       "non-orthogonal state pairs instead of bases (~25% sift rate).",
   },
+  decoy_bb84: {
+    name: "Decoy-State BB84",
+    description:
+      "Industry-standard practical QKD protocol using weak coherent pulses at " +
+      "multiple intensity levels (signal, decoy, vacuum) to detect photon number " +
+      "splitting (PNS) attacks. Enables secure key distribution with real laser sources.",
+  },
 };

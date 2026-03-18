@@ -43,4 +43,5 @@ export const EAVESDROP_THRESHOLDS: Record<string, number> = {
   b92: 0.15,
   e91: 0.11,
   sarg04: 0.11,
+  decoy_bb84: 0.11,
 };

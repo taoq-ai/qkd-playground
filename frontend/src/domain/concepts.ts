@@ -196,6 +196,41 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["all"],
   },
   {
+    id: "weak-coherent-pulses",
+    title: "Weak Coherent Pulses",
+    summary:
+      "Real laser sources emit coherent light pulses whose photon number follows " +
+      "a Poisson distribution. Most pulses contain zero or one photon, but some " +
+      "contain multiple photons, creating a security vulnerability.",
+    detail:
+      "An ideal QKD source would emit exactly one photon per pulse, but real lasers " +
+      "produce weak coherent states with mean photon number \u03bc. The probability " +
+      "of an n-photon pulse follows Poisson statistics. Multi-photon pulses " +
+      "allow an eavesdropper to split off extra photons (PNS attack) without disturbing " +
+      "the signal. The decoy-state technique overcomes this by using multiple intensities " +
+      "to monitor the channel's response to different photon-number distributions.",
+    relatedPhases: ["preparation", "transmission"],
+    protocols: ["decoy_bb84"],
+  },
+  {
+    id: "decoy-states",
+    title: "Decoy States",
+    summary:
+      "Decoy-state QKD uses pulses at multiple intensity levels (signal, decoy, vacuum) " +
+      "to estimate single-photon transmission statistics and detect photon number " +
+      "splitting attacks.",
+    detail:
+      "Alice randomly chooses between signal (\u03bc\u22480.5), decoy (\u03bd\u22480.1), " +
+      "and vacuum (\u03c9\u22480) intensity levels for each pulse. After transmission, she " +
+      "announces which intensity was used. By comparing detection rates across intensity " +
+      "classes, Alice and Bob can tightly bound the single-photon yield and QBER. A PNS " +
+      "attacker would affect multi-photon pulses differently from single-photon pulses, " +
+      "creating detectable differences between signal and decoy statistics. The GLLP " +
+      "formula then uses these bounds to compute a secure key rate.",
+    relatedPhases: ["preparation", "sifting", "error_estimation"],
+    protocols: ["decoy_bb84"],
+  },
+  {
     id: "shared-key",
     title: "The Shared Secret Key",
     summary:
