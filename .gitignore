@@ -46,3 +46,4 @@ htmlcov/
 
 # mkdocs
 site/
+.claude/
