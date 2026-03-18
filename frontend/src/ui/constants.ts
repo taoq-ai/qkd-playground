@@ -38,4 +38,11 @@ export const PROTOCOL_INFO: Record<string, { name: string; description: string }
       "pairs and measure in random bases. Security is verified via CHSH " +
       "inequality violation.",
   },
+  sarg04: {
+    name: "SARG04",
+    description:
+      "PNS-resistant protocol by Scarani, Acin, Ribordy & Gisin (2004). Uses " +
+      "the same 4 states as BB84 but with modified sifting: Alice announces " +
+      "non-orthogonal state pairs instead of bases (~25% sift rate).",
+  },
 };

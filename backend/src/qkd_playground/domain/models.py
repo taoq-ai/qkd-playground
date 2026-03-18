@@ -90,3 +90,4 @@ class ProtocolType(Enum):
     BB84 = "bb84"
     E91 = "e91"
     B92 = "b92"
+    SARG04 = "sarg04"

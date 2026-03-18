@@ -21,6 +21,7 @@ from qkd_playground.adapters.qiskit_adapter import (
     QiskitEntanglementAdapter,
     QiskitMeasurementAdapter,
 )
+from qkd_playground.adapters.sarg04 import SARG04Protocol
 from qkd_playground.domain.models import (
     ProtocolType,
     StepResult,
@@ -151,6 +152,8 @@ def _create_protocol(
     randomness = DefaultRandomness()
     if protocol_type == "b92":
         return B92Protocol(measurement, channel, randomness)
+    if protocol_type == "sarg04":
+        return SARG04Protocol(measurement, channel, randomness)
     if protocol_type == "e91":
         entanglement = QiskitEntanglementAdapter()
         return E91Protocol(measurement, channel, entanglement, randomness)

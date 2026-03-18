@@ -111,10 +111,10 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     detail:
       "Eve\u2019s intercept-resend attack introduces ~25% errors on " +
       "average. If the error rate exceeds a protocol-specific threshold " +
-      "(11% for BB84, 15% for B92), Alice and Bob discard the key and " +
-      "know the channel was compromised.",
+      "(11% for BB84 and SARG04, 15% for B92), Alice and Bob discard " +
+      "the key and know the channel was compromised.",
     relatedPhases: ["error_estimation"],
-    protocols: ["bb84", "b92"],
+    protocols: ["bb84", "b92", "sarg04"],
   },
   {
     id: "entanglement",
@@ -145,6 +145,23 @@ export const CONCEPTS: readonly ConceptEntry[] = [
       "toward the classical bound, revealing her presence.",
     relatedPhases: ["error_estimation"],
     protocols: ["e91"],
+  },
+  {
+    id: "pns-resistance",
+    title: "PNS Attack Resistance",
+    summary:
+      "SARG04 is designed to resist photon number splitting (PNS) attacks " +
+      "where an eavesdropper exploits multi-photon pulses in practical " +
+      "implementations.",
+    detail:
+      "In real-world QKD, laser sources sometimes emit more than one " +
+      "photon per pulse. An attacker can split off extra photons and " +
+      "measure them without disturbing the signal. SARG04 counters this " +
+      "by announcing non-orthogonal state pairs instead of bases during " +
+      "sifting. This makes it harder for Eve to exploit multi-photon " +
+      "pulses, at the cost of a lower sift rate (~25% vs BB84\u2019s ~50%).",
+    relatedPhases: ["sifting"],
+    protocols: ["sarg04"],
   },
   {
     id: "shared-key",
