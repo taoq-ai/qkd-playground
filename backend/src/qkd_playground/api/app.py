@@ -12,6 +12,10 @@ from pydantic import BaseModel, Field
 from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
 from qkd_playground.adapters.e91 import E91Protocol
+from qkd_playground.adapters.key_rate import (
+    calculate_key_rate,
+    calculate_plob_bound,
+)
 from qkd_playground.adapters.qiskit_adapter import (
     CompositeChannel,
     DefaultRandomness,
@@ -280,5 +284,51 @@ def create_app() -> FastAPI:
         protocol.reset(session["num_qubits"])
         session["steps"] = []
         return {"status": "reset"}
+
+    @app.get("/performance")
+    async def get_performance(
+        protocols: str = "bb84,b92,e91,sarg04",
+        max_distance: float = 200.0,
+        detector_efficiency: float = 0.1,
+        dark_count_rate: float = 1e-6,
+        steps: int = 100,
+    ) -> dict[str, Any]:
+        """Return rate-vs-distance data for requested protocols + PLOB bound."""
+        valid_protocols = {"bb84", "b92", "e91", "sarg04"}
+        requested = [
+            p.strip().lower()
+            for p in protocols.split(",")
+            if p.strip().lower() in valid_protocols
+        ]
+        if not requested:
+            raise HTTPException(400, "No valid protocols specified")
+
+        num_steps = min(max(steps, 10), 500)
+
+        result: dict[str, list[dict[str, float]]] = {}
+        for proto in requested:
+            points: list[dict[str, float]] = []
+            for i in range(num_steps + 1):
+                d = max_distance * i / num_steps
+                r = calculate_key_rate(proto, d, detector_efficiency, dark_count_rate)
+                points.append({"distance": round(d, 2), "rate": r})
+            result[proto] = points
+
+        # PLOB bound
+        plob_points: list[dict[str, float]] = []
+        for i in range(num_steps + 1):
+            d = max_distance * i / num_steps
+            r = calculate_plob_bound(d, detector_efficiency)
+            plob_points.append({"distance": round(d, 2), "rate": r})
+        result["plob_bound"] = plob_points
+
+        return {
+            "protocols": result,
+            "params": {
+                "max_distance": max_distance,
+                "detector_efficiency": detector_efficiency,
+                "dark_count_rate": dark_count_rate,
+            },
+        }
 
     return app

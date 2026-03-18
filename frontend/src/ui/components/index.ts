@@ -5,6 +5,7 @@ export { ConceptPanel } from "./ConceptPanel";
 export { EveAlert } from "./EveAlert";
 export { EvePanel } from "./EvePanel";
 export { KeyEfficiencyChart } from "./KeyEfficiencyChart";
+export { PerformancePanel } from "./PerformancePanel";
 export { ProgressBar } from "./ProgressBar";
 export { QBERGauge } from "./QBERGauge";
 export { QubitTable } from "./QubitTable";

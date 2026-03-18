@@ -209,6 +209,39 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     relatedPhases: ["complete"],
     protocols: ["all"],
   },
+  {
+    id: "rate-distance-tradeoff",
+    title: "Rate-Distance Trade-off",
+    summary:
+      "The secure key generation rate decreases exponentially with " +
+      "channel distance due to photon loss in optical fibers.",
+    detail:
+      "Standard optical fiber attenuates signals at ~0.2 dB/km, meaning " +
+      "roughly half the photons are lost every 15 km. As distance " +
+      "increases, fewer photons reach the detector while dark counts " +
+      "remain constant, degrading the signal-to-noise ratio until no " +
+      "secure key can be extracted. This is why practical QKD links are " +
+      "currently limited to a few hundred kilometres without quantum " +
+      "repeaters.",
+    relatedPhases: ["performance"],
+    protocols: ["all"],
+  },
+  {
+    id: "plob-bound",
+    title: "PLOB Bound",
+    summary:
+      "The Pirandola-Laurenza-Ottaviani-Banchi (PLOB) bound is the " +
+      "fundamental upper limit on key rate for any point-to-point QKD " +
+      "protocol without quantum repeaters.",
+    detail:
+      "The PLOB bound equals -log2(1 - eta), where eta is the channel " +
+      "transmittance. No QKD protocol can exceed this rate over a lossy " +
+      "channel without quantum repeaters or other intermediate trusted " +
+      "nodes. Overcoming this limit is one of the main motivations for " +
+      "developing quantum repeater technology.",
+    relatedPhases: ["performance"],
+    protocols: ["all"],
+  },
 ];
 
 /**
