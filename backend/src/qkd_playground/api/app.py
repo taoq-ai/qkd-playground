@@ -430,14 +430,27 @@ def create_app() -> FastAPI:
         )
 
     # Serve frontend static files (built SPA)
-    # In Docker: /app/backend/static, in dev/package: alongside the source
-    static_dir = Path(__file__).resolve().parent.parent / "static"
-    if not static_dir.is_dir():
-        static_dir = Path.cwd() / "static"
+    # Docker copies frontend dist to /app/backend/static via Dockerfile
+    # In-package static may exist at src/qkd_playground/static (dev)
+    static_candidates = [
+        Path.cwd() / "static",
+        Path(__file__).resolve().parent.parent / "static",
+    ]
+    static_dir: Path | None = None
+    for candidate in static_candidates:
+        if (candidate / "index.html").is_file():
+            static_dir = candidate
+            break
 
-    if static_dir.is_dir():
-        assets = StaticFiles(directory=static_dir / "assets")
-        app.mount("/assets", assets, name="assets")
+    if static_dir is not None:
+        # Mount sub-directories (e.g. assets/) if they exist
+        for child in static_dir.iterdir():
+            if child.is_dir():
+                app.mount(
+                    f"/{child.name}",
+                    StaticFiles(directory=child),
+                    name=child.name,
+                )
 
         @app.get("/{full_path:path}")
         async def serve_spa(full_path: str) -> FileResponse:
