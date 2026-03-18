@@ -1,14 +1,23 @@
 import type { StepResponse } from "../../adapters";
+import type { RunHistory } from "../../domain";
 import { computeMetrics, EAVESDROP_THRESHOLDS } from "../../domain";
 import { KeyEfficiencyChart } from "./KeyEfficiencyChart";
 import { QBERGauge } from "./QBERGauge";
+import { StatisticsGraphs } from "./StatisticsGraphs";
 
 interface StatisticsPanelProps {
   currentStep: StepResponse;
   protocol: string;
+  eavesdropperEnabled: boolean;
+  runHistory: RunHistory[];
 }
 
-export function StatisticsPanel({ currentStep, protocol }: StatisticsPanelProps) {
+export function StatisticsPanel({
+  currentStep,
+  protocol,
+  eavesdropperEnabled,
+  runHistory,
+}: StatisticsPanelProps) {
   // Only show after error estimation phase (when we have error_rate)
   if (currentStep.error_rate === null) return null;
 
@@ -32,6 +41,12 @@ export function StatisticsPanel({ currentStep, protocol }: StatisticsPanelProps)
           <span className="stat-value">{(metrics.keyEfficiency * 100).toFixed(1)}%</span>
         </div>
       </div>
+      <StatisticsGraphs
+        currentStep={currentStep}
+        protocol={protocol}
+        eavesdropperEnabled={eavesdropperEnabled}
+        runHistory={runHistory}
+      />
     </div>
   );
 }

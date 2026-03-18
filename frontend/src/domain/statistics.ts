@@ -45,3 +45,35 @@ export const EAVESDROP_THRESHOLDS: Record<string, number> = {
   sarg04: 0.11,
   decoy_bb84: 0.11,
 };
+
+/**
+ * Tracks metrics across multiple simulation runs.
+ */
+export interface RunHistory {
+  readonly runNumber: number;
+  readonly qber: number;
+  readonly siftRate: number;
+  readonly keyLength: number;
+  readonly protocol: string;
+  readonly eavesdropper: boolean;
+}
+
+/**
+ * Binary entropy function: H(p) = -p*log2(p) - (1-p)*log2(1-p).
+ * Returns 0 for p=0 or p=1, and 1 for p=0.5.
+ */
+export function calculateBinaryEntropy(p: number): number {
+  if (p <= 0 || p >= 1) return 0;
+  return -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p));
+}
+
+/**
+ * Estimate Eve's information gain using a simplified bound.
+ * If error rate e > 0, Eve's information ~ 1 - H(e).
+ * Returns a value between 0 and 1 representing fraction of key information.
+ */
+export function estimateEveInformation(errorRate: number): number {
+  if (errorRate <= 0) return 0;
+  if (errorRate >= 0.5) return 1;
+  return Math.max(0, 1 - calculateBinaryEntropy(errorRate));
+}

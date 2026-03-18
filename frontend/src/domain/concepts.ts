@@ -268,6 +268,21 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["all"],
   },
   {
+    id: "eve-information-bound",
+    title: "Eve's Information Bound",
+    summary:
+      "Information theory places a bound on how much key information an " +
+      "eavesdropper can obtain based on the observed error rate.",
+    detail:
+      "If the quantum bit error rate (QBER) is e, Eve's maximum information " +
+      "gain is bounded by 1 - H(e), where H is the binary entropy function. " +
+      "When e = 0, Eve has no information. As e increases toward 0.5, Eve " +
+      "could know almost everything. This bound determines how much the key " +
+      "must be shortened during privacy amplification to guarantee security.",
+    relatedPhases: ["error_estimation", "privacy_amplification"],
+    protocols: ["all"],
+  },
+  {
     id: "shared-key",
     title: "The Shared Secret Key",
     summary:
@@ -312,6 +327,41 @@ export const CONCEPTS: readonly ConceptEntry[] = [
       "nodes. Overcoming this limit is one of the main motivations for " +
       "developing quantum repeater technology.",
     relatedPhases: ["performance"],
+    protocols: ["all"],
+  },
+  {
+    id: "bloch-sphere",
+    title: "The Bloch Sphere",
+    summary:
+      "The Bloch sphere is a geometric representation of a single qubit state " +
+      "as a point on the surface of a unit sphere. The north and south poles " +
+      "represent |0\u27E9 and |1\u27E9, while equatorial points represent superpositions.",
+    detail:
+      "Any pure single-qubit state can be written as cos(\u03B8/2)|0\u27E9 + " +
+      "e^{i\u03C6}sin(\u03B8/2)|1\u27E9, where \u03B8 is the polar angle from " +
+      "the Z axis and \u03C6 is the azimuthal angle in the XY plane. The Z axis " +
+      "corresponds to the computational (rectilinear) basis, the X axis to the " +
+      "diagonal basis, and the Y axis to the circular basis. Measurement in a " +
+      "given basis projects the state onto that axis, with probabilities " +
+      "determined by the angle between the state vector and the measurement axis.",
+    relatedPhases: ["preparation", "measurement"],
+    protocols: ["all"],
+  },
+  {
+    id: "measurement-bases-bloch",
+    title: "Measurement Bases on the Bloch Sphere",
+    summary:
+      "Different measurement bases correspond to different axes of the Bloch " +
+      "sphere. The Z-basis (rectilinear) uses the vertical axis, while the " +
+      "X-basis (diagonal) uses the horizontal axis.",
+    detail:
+      "When measuring a qubit, the outcome probabilities depend on the angle " +
+      "between the state vector and the measurement axis. Measuring a |+\u27E9 " +
+      "state (on the X axis) in the Z-basis gives a 50/50 random result because " +
+      "the state is equidistant from both poles. This geometric picture explains " +
+      "why mismatched bases in QKD produce random results and why basis " +
+      "reconciliation is essential for key agreement.",
+    relatedPhases: ["preparation", "measurement"],
     protocols: ["all"],
   },
 ];

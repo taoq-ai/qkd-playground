@@ -12,4 +12,5 @@ export { ProgressBar } from "./ProgressBar";
 export { QBERGauge } from "./QBERGauge";
 export { QubitTable } from "./QubitTable";
 export { ResultsPanel } from "./ResultsPanel";
+export { StatisticsGraphs } from "./StatisticsGraphs";
 export { StatisticsPanel } from "./StatisticsPanel";
