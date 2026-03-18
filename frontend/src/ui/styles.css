@@ -762,6 +762,74 @@ body {
   color: var(--accent);
 }
 
+/* Statistics graphs */
+.statistics-graphs {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.chart-wrapper {
+  width: 100%;
+}
+
+.chart-description {
+  font-size: 0.75rem;
+  color: var(--foreground-secondary);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Eve information display */
+.eve-info-wrapper {
+  background: var(--danger-bg);
+  border: 1px solid #7f1d1d40;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.eve-info-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.eve-info-bar-track {
+  height: 1.25rem;
+  background: var(--background-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.eve-info-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f87171, #ef4444);
+  border-radius: 6px 0 0 6px;
+  transition: width 0.3s ease;
+}
+
+.eve-info-labels {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.eve-info-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--danger);
+  font-variant-numeric: tabular-nums;
+}
+
+.eve-info-caption {
+  font-size: 0.8rem;
+  color: var(--foreground-secondary);
+}
+
 /* Navigation tabs */
 .app-nav {
   display: flex;
@@ -1324,6 +1392,14 @@ body {
   }
 
   .performance-panel {
+    padding: 1.5rem;
+  }
+
+  .bloch-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bloch-panel {
     padding: 1.5rem;
   }
 }

@@ -42,7 +42,14 @@ export enum ProtocolType {
 }
 
 export { type ConceptEntry, CONCEPTS, getConceptsForPhase } from "./concepts";
-export { type SimulationMetrics, computeMetrics, EAVESDROP_THRESHOLDS } from "./statistics";
+export {
+  type SimulationMetrics,
+  type RunHistory,
+  computeMetrics,
+  calculateBinaryEntropy,
+  estimateEveInformation,
+  EAVESDROP_THRESHOLDS,
+} from "./statistics";
 
 /** Port interface for the simulation API client. */
 export interface SimulationPort {

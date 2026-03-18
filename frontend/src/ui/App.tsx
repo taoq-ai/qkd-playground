@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { StepResponse } from "../adapters";
 import { createSimulation, resetSimulation, stepSimulation } from "../adapters";
-import { getConceptsForPhase } from "../domain";
+import type { RunHistory } from "../domain";
+import { computeMetrics, getConceptsForPhase } from "../domain";
 import {
   BellTestPanel,
   CircuitDiagram,
@@ -31,9 +32,30 @@ export function App() {
   const [noiseLevel, setNoiseLevel] = useState(0);
   const [lossRate, setLossRate] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [runHistory, setRunHistory] = useState<RunHistory[]>([]);
+  const lastRecordedSimId = useRef<string | null>(null);
 
   const currentStep = steps.length > 0 ? steps[steps.length - 1] : null;
   const isComplete = currentStep?.is_complete ?? false;
+
+  // Record run history when simulation completes
+  useEffect(() => {
+    if (isComplete && currentStep && simId && lastRecordedSimId.current !== simId) {
+      lastRecordedSimId.current = simId;
+      const metrics = computeMetrics(currentStep);
+      setRunHistory((prev) => [
+        ...prev,
+        {
+          runNumber: prev.length + 1,
+          qber: metrics.errorRate,
+          siftRate: metrics.siftRate,
+          keyLength: metrics.sharedKeyLength,
+          protocol,
+          eavesdropper,
+        },
+      ]);
+    }
+  }, [isComplete, currentStep, simId, protocol, eavesdropper]);
 
   const handleCreate = useCallback(async () => {
     setLoading(true);
@@ -87,6 +109,11 @@ export function App() {
     setSimId(null);
     setSteps([]);
     setError(null);
+  }, []);
+
+  const handleClearHistory = useCallback(() => {
+    setRunHistory([]);
+    lastRecordedSimId.current = null;
   }, []);
 
   return (
@@ -244,6 +271,11 @@ export function App() {
               <button className="btn btn-ghost" onClick={handleNewSimulation}>
                 New Simulation
               </button>
+              {runHistory.length > 0 && (
+                <button className="btn btn-ghost" onClick={handleClearHistory}>
+                  Clear History
+                </button>
+              )}
             </div>
 
             {error && <div className="error-banner">{error}</div>}
@@ -273,7 +305,12 @@ export function App() {
                   protocol={protocol}
                 />
                 <ResultsPanel step={currentStep} />
-                <StatisticsPanel currentStep={currentStep} protocol={protocol} />
+                <StatisticsPanel
+                  currentStep={currentStep}
+                  protocol={protocol}
+                  eavesdropperEnabled={eavesdropper}
+                  runHistory={runHistory}
+                />
               </div>
             )}
 
