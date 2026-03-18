@@ -10,7 +10,7 @@ RUN yarn install --immutable
 
 # Then copy source and build
 COPY frontend/ .
-RUN yarn build
+RUN yarn build:spa
 
 # ---------- BACKEND ----------
 FROM python:3.11-slim AS runtime
@@ -35,7 +35,7 @@ COPY backend/ .
 RUN uv sync --frozen --no-dev
 
 # Copy built frontend into the static directory
-COPY --from=frontend-builder /app/frontend/dist ./static
+COPY --from=frontend-builder /app/frontend/dist-spa ./static
 
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 
