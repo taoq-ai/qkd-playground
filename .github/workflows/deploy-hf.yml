@@ -23,6 +23,25 @@ jobs:
         run: |
           # Remove .claude worktree submodule refs if present
           git rm -r --cached .claude 2>/dev/null && git commit -m "chore: remove .claude from tree" || true
+
+          # Prepend HF Spaces YAML frontmatter to README.md
+          cat > /tmp/hf-header.txt <<'EOF'
+          ---
+          title: QKD Playground
+          emoji: "\U0001F510"
+          colorFrom: indigo
+          colorTo: purple
+          sdk: docker
+          app_port: 7860
+          pinned: false
+          ---
+          EOF
+          sed -i 's/^          //' /tmp/hf-header.txt
+          cat /tmp/hf-header.txt README.md > /tmp/README-hf.md
+          mv /tmp/README-hf.md README.md
+          git add README.md
+          git commit -m "chore: add HF Spaces frontmatter"
+
           # Migrate binary files to Git LFS (required by HF Spaces)
           git lfs install
           git lfs migrate import --include="*.gif,*.gz,*.png" --everything --yes
