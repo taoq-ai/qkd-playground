@@ -44,6 +44,24 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["all"],
   },
   {
+    id: "channel-noise",
+    title: "Channel Noise & Photon Loss",
+    summary:
+      "Real quantum channels (like fiber optic cables) introduce errors " +
+      "through depolarization and photon loss, degrading the transmitted " +
+      "qubit states even without an eavesdropper.",
+    detail:
+      "Depolarizing noise randomly scrambles qubit states with some " +
+      "probability, replacing the intended state with a random one. " +
+      "Photon loss occurs when photons are absorbed or scattered in " +
+      "the fiber, resulting in missing detections that appear as random " +
+      "noise. These imperfections make eavesdropper detection harder, " +
+      "since some errors are expected even on a secure channel. QKD " +
+      "protocols must distinguish natural channel noise from eavesdropping.",
+    relatedPhases: ["transmission"],
+    protocols: ["all"],
+  },
+  {
     id: "no-cloning",
     title: "The No-Cloning Theorem",
     summary:

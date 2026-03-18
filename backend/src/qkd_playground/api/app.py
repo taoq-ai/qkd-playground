@@ -13,9 +13,11 @@ from qkd_playground.adapters.b92 import B92Protocol
 from qkd_playground.adapters.bb84 import BB84Protocol
 from qkd_playground.adapters.e91 import E91Protocol
 from qkd_playground.adapters.qiskit_adapter import (
+    CompositeChannel,
     DefaultRandomness,
     EavesdroppingChannel,
     IdealQuantumChannel,
+    NoisyChannel,
     QiskitEntanglementAdapter,
     QiskitMeasurementAdapter,
 )
@@ -25,7 +27,7 @@ from qkd_playground.domain.models import (
 )
 
 if TYPE_CHECKING:
-    from qkd_playground.domain.ports import ProtocolPort
+    from qkd_playground.domain.ports import ProtocolPort, QuantumChannelPort
 
 
 class CreateSimulationRequest(BaseModel):
@@ -34,6 +36,12 @@ class CreateSimulationRequest(BaseModel):
     protocol: str = Field(default="bb84", description="Protocol type")
     num_qubits: int = Field(default=20, ge=4, le=1000, description="Number of qubits")
     eavesdropper: bool = Field(default=False, description="Enable eavesdropper")
+    noise_level: float = Field(
+        default=0.0, ge=0.0, le=1.0, description="Depolarizing noise rate"
+    )
+    loss_rate: float = Field(
+        default=0.0, ge=0.0, le=1.0, description="Photon loss rate"
+    )
 
 
 class StepResponse(BaseModel):
@@ -92,6 +100,8 @@ class SimulationState(BaseModel):
     protocol: str
     num_qubits: int
     eavesdropper: bool
+    noise_level: float = 0.0
+    loss_rate: float = 0.0
     current_step: StepResponse | None
     steps: list[StepResponse]
     is_complete: bool
@@ -116,14 +126,28 @@ _sessions: dict[str, dict[str, Any]] = {}
 def _create_protocol(
     protocol_type: str,
     eavesdropper: bool,
+    noise_level: float = 0.0,
+    loss_rate: float = 0.0,
 ) -> ProtocolPort:
     """Create a protocol instance based on type."""
     measurement = QiskitMeasurementAdapter()
-    channel: IdealQuantumChannel | EavesdroppingChannel
+
+    channels: list[QuantumChannelPort] = []
+    if noise_level > 0 or loss_rate > 0:
+        channels.append(
+            NoisyChannel(depolarizing_rate=noise_level, loss_rate=loss_rate)
+        )
     if eavesdropper:
-        channel = EavesdroppingChannel(measurement)
-    else:
+        channels.append(EavesdroppingChannel(measurement))
+
+    channel: QuantumChannelPort
+    if not channels:
         channel = IdealQuantumChannel()
+    elif len(channels) == 1:
+        channel = channels[0]
+    else:
+        channel = CompositeChannel(channels)
+
     randomness = DefaultRandomness()
     if protocol_type == "b92":
         return B92Protocol(measurement, channel, randomness)
@@ -162,13 +186,17 @@ def create_app() -> FastAPI:
         req: CreateSimulationRequest,
     ) -> dict[str, str]:
         sim_id = str(uuid.uuid4())
-        protocol = _create_protocol(req.protocol, req.eavesdropper)
+        protocol = _create_protocol(
+            req.protocol, req.eavesdropper, req.noise_level, req.loss_rate
+        )
         protocol.reset(req.num_qubits)
         _sessions[sim_id] = {
             "protocol": protocol,
             "protocol_type": req.protocol,
             "num_qubits": req.num_qubits,
             "eavesdropper": req.eavesdropper,
+            "noise_level": req.noise_level,
+            "loss_rate": req.loss_rate,
             "steps": [],
         }
         return {"simulation_id": sim_id}
@@ -198,6 +226,8 @@ def create_app() -> FastAPI:
             protocol=session["protocol_type"],
             num_qubits=session["num_qubits"],
             eavesdropper=session["eavesdropper"],
+            noise_level=session.get("noise_level", 0.0),
+            loss_rate=session.get("loss_rate", 0.0),
             current_step=steps[-1] if steps else None,
             steps=steps,
             is_complete=protocol.is_complete(),

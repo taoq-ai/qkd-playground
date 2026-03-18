@@ -172,6 +172,70 @@ class EavesdroppingChannel(QuantumChannelPort):
         return self._measurement.prepare(eve_result.outcome, eve_basis)
 
 
+class NoisyChannel(QuantumChannelPort):
+    """Quantum channel with configurable depolarizing noise and photon loss.
+
+    Models real-world fiber optic channel imperfections:
+    - Depolarizing noise: qubit state is replaced by a random state
+    - Photon loss: photon is lost and replaced by random detector noise
+    """
+
+    def __init__(
+        self,
+        depolarizing_rate: float = 0.0,
+        loss_rate: float = 0.0,
+    ) -> None:
+        if not 0.0 <= depolarizing_rate <= 1.0:
+            msg = "depolarizing_rate must be between 0.0 and 1.0"
+            raise ValueError(msg)
+        if not 0.0 <= loss_rate <= 1.0:
+            msg = "loss_rate must be between 0.0 and 1.0"
+            raise ValueError(msg)
+        self._depolarizing_rate = depolarizing_rate
+        self._loss_rate = loss_rate
+
+    def _random_qubit(self) -> Qubit:
+        """Generate a completely random qubit (random basis and value)."""
+        basis = random.choice([Basis.RECTILINEAR, Basis.DIAGONAL])  # noqa: S311
+        value = random.choice([BitValue.ZERO, BitValue.ONE])  # noqa: S311
+        return Qubit(basis=basis, value=value)
+
+    def transmit(self, qubit: Qubit) -> Qubit:
+        """Transmit a qubit through a noisy channel.
+
+        First applies photon loss (replacing with random qubit),
+        then applies depolarizing noise (replacing with random qubit).
+        """
+        # Photon loss: with probability loss_rate, photon is lost
+        # and detector registers random noise
+        if self._loss_rate > 0 and random.random() < self._loss_rate:  # noqa: S311
+            qubit = self._random_qubit()
+
+        # Depolarizing noise: with probability depolarizing_rate,
+        # qubit state is replaced by a completely random state
+        if self._depolarizing_rate > 0 and random.random() < self._depolarizing_rate:  # noqa: S311
+            qubit = self._random_qubit()
+
+        return qubit
+
+
+class CompositeChannel(QuantumChannelPort):
+    """Composes multiple quantum channels in sequence.
+
+    Useful for combining noise with eavesdropping, e.g.:
+    CompositeChannel([NoisyChannel(0.05), EavesdroppingChannel(m)])
+    """
+
+    def __init__(self, channels: list[QuantumChannelPort]) -> None:
+        self._channels = channels
+
+    def transmit(self, qubit: Qubit) -> Qubit:
+        """Pass qubit through each channel in sequence."""
+        for channel in self._channels:
+            qubit = channel.transmit(qubit)
+        return qubit
+
+
 class DefaultRandomness(RandomnessPort):
     """Default randomness using Python's random module."""
 
