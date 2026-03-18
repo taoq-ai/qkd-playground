@@ -67,6 +67,11 @@ class BB84Protocol(ProtocolPort):
         self._transmitted_qubits: list[Qubit] = []
         self._eve_bases: list[Basis] = []
         self._eve_results: list[BitValue] = []
+        self._reconciled_key_alice: list[BitValue] = []
+        self._reconciled_key_bob: list[BitValue] = []
+        self._reconciliation_corrections: int = 0
+        self._amplified_key: list[BitValue] = []
+        self._privacy_amplification_ratio: float = 0.0
 
     def reset(self, num_qubits: int) -> None:
         """Reset protocol state for a new run."""
@@ -86,6 +91,11 @@ class BB84Protocol(ProtocolPort):
         self._transmitted_qubits = []
         self._eve_bases = []
         self._eve_results = []
+        self._reconciled_key_alice = []
+        self._reconciled_key_bob = []
+        self._reconciliation_corrections = 0
+        self._amplified_key = []
+        self._privacy_amplification_ratio = 0.0
         if isinstance(self._channel, EavesdroppingChannel):
             self._channel.clear()
 
@@ -120,6 +130,10 @@ class BB84Protocol(ProtocolPort):
             return self._step_sifting()
         if self._phase == ProtocolPhase.ERROR_ESTIMATION:
             return self._step_error_estimation()
+        if self._phase == ProtocolPhase.RECONCILIATION:
+            return self._step_reconciliation()
+        if self._phase == ProtocolPhase.PRIVACY_AMPLIFICATION:
+            return self._step_privacy_amplification()
         return self._make_step_result(
             "Protocol is complete.",
         )
@@ -231,7 +245,10 @@ class BB84Protocol(ProtocolPort):
             else:
                 self._shared_key = list(self._sifted_key_alice)
 
-        self._phase = ProtocolPhase.COMPLETE
+        if self._eavesdropper_detected:
+            self._phase = ProtocolPhase.COMPLETE
+        else:
+            self._phase = ProtocolPhase.RECONCILIATION
         self._step_index += 1
 
         thresh = f"{EAVESDROP_THRESHOLD:.0%}"
@@ -251,6 +268,46 @@ class BB84Protocol(ProtocolPort):
             )
 
         return self._make_step_result(desc)
+
+    def _step_reconciliation(self) -> StepResult:
+        """Information reconciliation: correct errors in sifted key."""
+        from qkd_playground.adapters.post_processing import reconcile_keys
+
+        (
+            self._reconciled_key_alice,
+            self._reconciled_key_bob,
+            self._reconciliation_corrections,
+        ) = reconcile_keys(self._sifted_key_alice, self._sifted_key_bob)
+
+        self._phase = ProtocolPhase.PRIVACY_AMPLIFICATION
+        self._step_index += 1
+
+        n = len(self._reconciled_key_alice)
+        return self._make_step_result(
+            f"Information reconciliation: corrected {self._reconciliation_corrections} "
+            f"errors using parity checks. Reconciled key: {n} bits."
+        )
+
+    def _step_privacy_amplification(self) -> StepResult:
+        """Privacy amplification: compress key to remove Eve's information."""
+        from qkd_playground.adapters.post_processing import amplify_privacy
+
+        self._amplified_key, self._privacy_amplification_ratio = amplify_privacy(
+            self._reconciled_key_alice, self._error_rate
+        )
+        self._shared_key = self._amplified_key
+
+        self._phase = ProtocolPhase.COMPLETE
+        self._step_index += 1
+
+        n_before = len(self._reconciled_key_alice)
+        n_after = len(self._amplified_key)
+        ratio = f"{self._privacy_amplification_ratio:.0%}"
+        return self._make_step_result(
+            f"Privacy amplification: compressed {n_before}-bit key to "
+            f"{n_after} bits ({ratio} retention) using universal hashing. "
+            f"Eve's information has been removed."
+        )
 
     def _sift_rate(self) -> float:
         if self._num_qubits == 0:
@@ -276,4 +333,9 @@ class BB84Protocol(ProtocolPort):
             eve_intercepted=len(self._eve_bases) > 0,
             eve_bases=list(self._eve_bases),
             eve_results=list(self._eve_results),
+            reconciled_key_alice=list(self._reconciled_key_alice),
+            reconciled_key_bob=list(self._reconciled_key_bob),
+            reconciliation_corrections=self._reconciliation_corrections,
+            amplified_key=list(self._amplified_key),
+            privacy_amplification_ratio=self._privacy_amplification_ratio,
         )

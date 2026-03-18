@@ -10,6 +10,9 @@ export function KeyEfficiencyChart({ metrics }: KeyEfficiencyChartProps) {
     { name: "Total Qubits", value: metrics.totalQubits, fill: "#4fd1c5" },
     { name: "Sifted Key", value: metrics.siftedKeyLength, fill: "#38b2ac" },
     { name: "Shared Key", value: metrics.sharedKeyLength, fill: "#81e6d9" },
+    ...(metrics.amplifiedKeyLength > 0
+      ? [{ name: "Amplified Key", value: metrics.amplifiedKeyLength, fill: "#68d391" }]
+      : []),
   ];
 
   return (

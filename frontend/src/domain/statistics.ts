@@ -7,6 +7,7 @@ export interface SimulationMetrics {
   readonly totalQubits: number;
   readonly siftedKeyLength: number;
   readonly sharedKeyLength: number;
+  readonly amplifiedKeyLength: number;
   readonly errorRate: number;
   readonly siftRate: number;
   readonly keyEfficiency: number;
@@ -19,14 +20,17 @@ export function computeMetrics(step: {
   shared_key: number[];
   error_rate: number | null;
   eavesdropper_detected: boolean | null;
+  amplified_key?: number[];
 }): SimulationMetrics {
   const total = step.alice_bits.length;
   const sifted = step.sifted_key_alice.length;
   const shared = step.shared_key.length;
+  const amplified = step.amplified_key?.length ?? 0;
   return {
     totalQubits: total,
     siftedKeyLength: sifted,
     sharedKeyLength: shared,
+    amplifiedKeyLength: amplified,
     errorRate: step.error_rate ?? 0,
     siftRate: total > 0 ? sifted / total : 0,
     keyEfficiency: total > 0 ? shared / total : 0,

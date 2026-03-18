@@ -164,6 +164,38 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["sarg04"],
   },
   {
+    id: "information-reconciliation",
+    title: "Information Reconciliation",
+    summary:
+      "After sifting, Alice and Bob's keys may still contain a few errors. " +
+      "Information reconciliation uses error-correction techniques to fix " +
+      "these discrepancies without revealing the key.",
+    detail:
+      "A Cascade-inspired protocol divides the key into blocks and compares " +
+      "parities over the classical channel. When a parity mismatch is found, " +
+      "a binary search within the block locates and corrects the error bit. " +
+      "This reveals some information (the parities), which must be accounted " +
+      "for in the subsequent privacy amplification step.",
+    relatedPhases: ["reconciliation"],
+    protocols: ["all"],
+  },
+  {
+    id: "privacy-amplification",
+    title: "Privacy Amplification",
+    summary:
+      "Privacy amplification compresses the reconciled key to eliminate any " +
+      "information an eavesdropper may have gained during transmission or " +
+      "error correction.",
+    detail:
+      "Using universal hashing (based on the Shannon entropy bound), the " +
+      "key is shortened to a length where Eve's information is negligible. " +
+      "The compression ratio depends on the error rate: higher errors mean " +
+      "more bits must be sacrificed. The result is a shorter but provably " +
+      "secure final key.",
+    relatedPhases: ["privacy_amplification"],
+    protocols: ["all"]
+  },
+  {
     id: "shared-key",
     title: "The Shared Secret Key",
     summary:

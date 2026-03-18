@@ -47,7 +47,7 @@ class TestSimulationWorkflow:
 
         # Step through all phases
         phases = []
-        for _ in range(10):
+        for _ in range(12):
             resp = client.post(f"/simulation/{sim_id}/step")
             if resp.status_code != 200:
                 break
@@ -57,7 +57,7 @@ class TestSimulationWorkflow:
                 break
 
         assert "complete" in phases
-        assert len(phases) == 5
+        assert len(phases) == 7
 
     def test_get_state(self, client: TestClient) -> None:
         resp = client.post(
@@ -89,7 +89,7 @@ class TestSimulationWorkflow:
         data = resp.json()
         assert data["raw_key_length"] == 30
         assert data["sifted_key_length"] > 0
-        assert len(data["steps"]) == 5
+        assert len(data["steps"]) == 7
 
     def test_run_with_eavesdropper(self, client: TestClient) -> None:
         resp = client.post(

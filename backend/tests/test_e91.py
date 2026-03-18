@@ -67,7 +67,7 @@ def test_e91_bell_pair_correlation() -> None:
 
 
 def test_e91_step_by_step() -> None:
-    """E91 should go through all 5 phases in order."""
+    """E91 should go through all 7 phases in order."""
     proto = _make_protocol()
     proto.reset(20)
 
@@ -76,6 +76,8 @@ def test_e91_step_by_step() -> None:
         ProtocolPhase.MEASUREMENT,
         ProtocolPhase.SIFTING,
         ProtocolPhase.ERROR_ESTIMATION,
+        ProtocolPhase.RECONCILIATION,
+        ProtocolPhase.PRIVACY_AMPLIFICATION,
         ProtocolPhase.COMPLETE,
     ]
 

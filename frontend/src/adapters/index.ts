@@ -21,6 +21,11 @@ export interface StepResponse {
   eve_intercepted: boolean;
   eve_bases: string[];
   eve_results: number[];
+  reconciled_key_alice: number[];
+  reconciled_key_bob: number[];
+  reconciliation_corrections: number;
+  amplified_key: number[];
+  privacy_amplification_ratio: number;
   is_complete: boolean;
 }
 
