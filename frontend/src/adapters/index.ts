@@ -1,5 +1,5 @@
 /**
- * API client adapter — connects to the FastAPI backend.
+ * API client adapter -- connects to the FastAPI backend.
  */
 
 export interface StepResponse {
@@ -26,6 +26,9 @@ export interface StepResponse {
   reconciliation_corrections: number;
   amplified_key: number[];
   privacy_amplification_ratio: number;
+  eve_information_gain: number;
+  intercepted_fraction: number;
+  multi_photon_fraction: number;
   is_complete: boolean;
 }
 
@@ -49,6 +52,8 @@ export async function createSimulation(
   eavesdropper: boolean,
   noiseLevel: number = 0,
   lossRate: number = 0,
+  attackType: string = "intercept_resend",
+  interceptFraction: number = 0.5,
 ): Promise<string> {
   const resp = await fetch(`${BASE_URL}/simulation/create`, {
     method: "POST",
@@ -59,6 +64,8 @@ export async function createSimulation(
       eavesdropper,
       noise_level: noiseLevel,
       loss_rate: lossRate,
+      attack_type: attackType,
+      intercept_fraction: interceptFraction,
     }),
   });
   const data = (await resp.json()) as { simulation_id: string };

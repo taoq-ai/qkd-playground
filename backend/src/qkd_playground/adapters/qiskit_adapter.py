@@ -14,6 +14,7 @@ from qkd_playground.domain.models import (
     Qubit,
 )
 from qkd_playground.domain.ports import (
+    AttackPort,
     EntanglementPort,
     MeasurementPort,
     QuantumChannelPort,
@@ -62,7 +63,7 @@ class QiskitMeasurementAdapter(MeasurementPort):
 
 
 class QiskitEntanglementAdapter(EntanglementPort):
-    """Generate entangled Bell pairs |Φ+⟩ = (|00⟩ + |11⟩)/√2.
+    """Generate entangled Bell pairs.
 
     When both halves are measured in the same basis, outcomes are
     perfectly correlated. When measured in different bases, outcomes
@@ -96,7 +97,7 @@ class QiskitEntanglementAdapter(EntanglementPort):
     ) -> tuple[BitValue, BitValue]:
         """Measure an entangled Bell pair with proper quantum correlations.
 
-        Creates a fresh 2-qubit Bell state |Φ+⟩, applies basis
+        Creates a fresh 2-qubit Bell state, applies basis
         transformations for both parties, and measures simultaneously.
         This preserves quantum correlations that would be lost if
         each qubit were measured independently.
@@ -136,13 +137,14 @@ class IdealQuantumChannel(QuantumChannelPort):
         return qubit
 
 
-class EavesdroppingChannel(QuantumChannelPort):
+class EavesdroppingChannel(AttackPort):
     """Quantum channel with an eavesdropper performing intercept-resend."""
 
     def __init__(self, measurement: MeasurementPort) -> None:
         self._measurement = measurement
         self._eve_bases: list[Basis] = []
         self._eve_results: list[BitValue] = []
+        self._total_count: int = 0
 
     @property
     def eve_bases(self) -> list[Basis]:
@@ -154,16 +156,38 @@ class EavesdroppingChannel(QuantumChannelPort):
         """Return Eve's measurement results."""
         return list(self._eve_results)
 
+    @property
+    def eve_information_gain(self) -> float:
+        """Intercept-resend: Eve gains ~50% info (correct when bases match)."""
+        return 0.5
+
+    @property
+    def intercepted_count(self) -> int:
+        """Return the number of qubits Eve intercepted."""
+        return self._total_count
+
+    @property
+    def multi_photon_count(self) -> int:
+        """Return the number of multi-photon pulses (always 0)."""
+        return 0
+
+    @property
+    def total_count(self) -> int:
+        """Return the total number of qubits transmitted."""
+        return self._total_count
+
     def clear(self) -> None:
         """Reset recorded Eve data for a new run."""
         self._eve_bases = []
         self._eve_results = []
+        self._total_count = 0
 
     def transmit(self, qubit: Qubit) -> Qubit:
         """Eve intercepts, measures in random basis, resends.
 
         This introduces ~25% error rate when bases don't match.
         """
+        self._total_count += 1
         eve_basis = random.choice([Basis.RECTILINEAR, Basis.DIAGONAL])  # noqa: S311
         eve_result = self._measurement.measure(qubit, eve_basis)
         self._eve_bases.append(eve_basis)

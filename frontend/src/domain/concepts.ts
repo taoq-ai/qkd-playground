@@ -182,6 +182,61 @@ export const CONCEPTS: readonly ConceptEntry[] = [
     protocols: ["sarg04"],
   },
   {
+    id: "pns-attack",
+    title: "Photon Number Splitting (PNS) Attack",
+    summary:
+      "A PNS attack exploits multi-photon pulses from weak coherent sources. " +
+      "Eve splits off extra photons from multi-photon pulses and stores them, " +
+      "measuring after bases are announced to gain information without " +
+      "introducing errors.",
+    detail:
+      "In practical QKD with weak coherent pulse sources, each pulse's photon " +
+      "number follows a Poisson distribution with mean \u03bc. Pulses with two " +
+      "or more photons allow Eve to split off extras without disturbing the " +
+      "signal sent to Bob. She stores these photons and measures them after " +
+      "Alice announces her bases. This gives Eve full information on " +
+      "multi-photon pulses without increasing the QBER. The attack is defeated " +
+      "by SARG04 (which doesn't reveal bases) and decoy-state BB84 (which " +
+      "detects anomalous transmission rates).",
+    relatedPhases: ["transmission"],
+    protocols: ["bb84", "b92", "sarg04", "decoy_bb84"],
+  },
+  {
+    id: "partial-intercept",
+    title: "Partial Intercept Attack",
+    summary:
+      "Eve intercepts only a fraction of qubits, trading information gain " +
+      "for a lower detection probability. This makes eavesdropping harder " +
+      "to detect but gives Eve less of the key.",
+    detail:
+      "Instead of intercepting every qubit (which introduces ~25% QBER), Eve " +
+      "selectively intercepts only a fraction f of the transmitted qubits. " +
+      "The expected QBER drops to ~25% * f, while Eve gains information on " +
+      "~50% * f of the key bits. For example, intercepting 10% of qubits " +
+      "introduces only ~2.5% QBER (below typical detection thresholds) but " +
+      "gives Eve information on ~5% of key bits.",
+    relatedPhases: ["transmission"],
+    protocols: ["all"],
+  },
+  {
+    id: "attack-protocol-resistance",
+    title: "Protocol Resistance to Attacks",
+    summary:
+      "Different protocols resist different attacks. BB84 is vulnerable to " +
+      "PNS attacks with weak coherent sources. SARG04 and decoy-state BB84 " +
+      "are designed to counter PNS attacks specifically.",
+    detail:
+      "Standard BB84 announces measurement bases during sifting, which lets " +
+      "a PNS attacker measure stored photons in the correct basis. SARG04 " +
+      "announces non-orthogonal state pairs instead, making it harder for " +
+      "Eve to extract information even from multi-photon pulses. Decoy-state " +
+      "BB84 uses multiple pulse intensities to detect the transmission rate " +
+      "anomalies that PNS attacks cause. All protocols detect intercept-resend " +
+      "and partial intercept attacks through elevated QBER.",
+    relatedPhases: ["error_estimation"],
+    protocols: ["all"],
+  },
+  {
     id: "information-reconciliation",
     title: "Information Reconciliation",
     summary:

@@ -77,6 +77,9 @@ class StepResult:
     reconciliation_corrections: int = 0
     amplified_key: list[BitValue] = field(default_factory=list)
     privacy_amplification_ratio: float = 0.0
+    eve_information_gain: float = 0.0
+    intercepted_fraction: float = 0.0
+    multi_photon_fraction: float = 0.0
 
 
 @dataclass
@@ -100,3 +103,12 @@ class ProtocolType(Enum):
     SARG04 = "sarg04"
     DECOY_BB84 = "decoy_bb84"
     MDI_QKD = "mdi_qkd"
+
+
+class AttackType(Enum):
+    """Types of eavesdropping attacks."""
+
+    NONE = "none"
+    INTERCEPT_RESEND = "intercept_resend"
+    PNS = "pns"
+    PARTIAL_INTERCEPT = "partial_intercept"

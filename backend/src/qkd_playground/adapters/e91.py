@@ -21,7 +21,6 @@ security check.
 from __future__ import annotations
 
 from qkd_playground.adapters.qiskit_adapter import (
-    EavesdroppingChannel,  # noqa: TCH001
     QiskitEntanglementAdapter,  # noqa: TCH001
 )
 from qkd_playground.domain.models import (
@@ -33,6 +32,7 @@ from qkd_playground.domain.models import (
     StepResult,
 )
 from qkd_playground.domain.ports import (
+    AttackPort,
     MeasurementPort,
     ProtocolPort,
     QuantumChannelPort,
@@ -112,7 +112,7 @@ class E91Protocol(ProtocolPort):
         self._reconciliation_corrections = 0
         self._amplified_key = []
         self._privacy_amplification_ratio = 0.0
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._channel.clear()
 
     def is_complete(self) -> bool:
@@ -183,7 +183,7 @@ class E91Protocol(ProtocolPort):
         ]
 
         # Record Eve's interception data if eavesdropper is active
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._eve_bases = self._channel.eve_bases
             self._eve_results = self._channel.eve_results
 

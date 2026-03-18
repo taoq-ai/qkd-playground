@@ -27,7 +27,6 @@ import math
 import random
 from enum import Enum
 
-from qkd_playground.adapters.qiskit_adapter import EavesdroppingChannel
 from qkd_playground.domain.models import (
     Basis,
     BitValue,
@@ -37,6 +36,7 @@ from qkd_playground.domain.models import (
     StepResult,
 )
 from qkd_playground.domain.ports import (
+    AttackPort,
     MeasurementPort,
     ProtocolPort,
     QuantumChannelPort,
@@ -157,7 +157,7 @@ class DecoyBB84Protocol(ProtocolPort):
         self._single_photon_yield = 0.0
         self._single_photon_qber = 0.0
         self._secure_key_rate = 0.0
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._channel.clear()
 
     def is_complete(self) -> bool:
@@ -256,7 +256,7 @@ class DecoyBB84Protocol(ProtocolPort):
             self._transmitted_qubits.append(transmitted)
 
         # Record Eve's interception data if eavesdropper is active
-        if isinstance(self._channel, EavesdroppingChannel):
+        if isinstance(self._channel, AttackPort):
             self._eve_bases = self._channel.eve_bases
             self._eve_results = self._channel.eve_results
 

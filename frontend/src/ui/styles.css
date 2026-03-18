@@ -181,6 +181,21 @@ body {
   color: var(--foreground);
 }
 
+.attack-selector {
+  margin-top: 0.5rem;
+}
+
+.attack-selector label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.attack-fraction-group {
+  margin-top: 0.5rem;
+}
+
 .eve-warning {
   margin-top: 0.5rem;
   padding: 0.75rem;
