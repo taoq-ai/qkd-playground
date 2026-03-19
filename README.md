@@ -6,6 +6,7 @@
 [![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](https://taoq-ai.github.io/qkd-playground)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Demo](https://img.shields.io/badge/demo-Hugging%20Face%20Spaces-yellow)](https://huggingface.co/spaces/taoq-ai/qkd-playground)
+
 Interactive web-based **Quantum Key Distribution** simulator and learning platform.
 Step through **BB84**, **B92**, **E91**, and **SARG04** protocols, visualize qubit states with an interactive circuit diagram, explore quantum concepts, and simulate eavesdropping attacks — all powered by real quantum simulation with [Qiskit](https://qiskit.org/).
 
